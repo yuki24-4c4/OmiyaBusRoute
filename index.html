@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Omiya Bus Route Planner</title>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orange: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 500: '#f97316', 600: '#ea580c', 700: '#c2410c' },
+            green: { 500: '#22c55e', 600: '#16a34a' },
+            blue: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af' },
+            indigo: { 50: '#eef2ff', 600: '#4f46e5' },
+            purple: { 50: '#faf5ff', 100: '#f3e8ff', 500: '#a855f7', 600: '#9333ea', 700: '#7e22ce' },
+            gray: { 50: '#f9fafb', 100: '#f3f4f6', 200: '#e5e7eb', 300: '#d1d5db', 400: '#9ca3af', 500: '#6b7280', 600: '#4b5563', 700: '#374151', 900: '#111827' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-900 overflow-hidden">
+
+  <!-- ========================================== -->
+  <!-- MOBILE VIEW -->
+  <!-- ========================================== -->
+  <div id="mobile-view" class="h-screen flex flex-col relative overflow-hidden bg-gray-50">
+    <!-- Map -->
+    <div class="absolute inset-0 z-0" id="map-mobile"></div>
+
+    <!-- Top Search Bar Container -->
+    <div class="absolute top-0 left-0 right-0 z-20 p-3">
+      <div class="flex items-center gap-2" id="mobile-search-bar-container">
+        <!-- Default State: Search Button & Time -->
+        <div id="mobile-search-collapsed" class="flex w-full gap-2">
+          <button id="mobile-search-btn" class="flex-1 bg-white rounded-2xl shadow-xl px-5 py-4 flex items-center gap-3 text-left hover:shadow-2xl transition-all active:scale-[0.98]">
+            <i data-lucide="search" class="w-5 h-5 text-blue-600 flex-shrink-0"></i>
+            <span class="text-gray-600">のりばや行き先を検索...</span>
+          </button>
+          
+          <div class="bg-white rounded-2xl shadow-xl px-4 py-4 flex-shrink-0">
+            <div class="text-sm font-semibold text-gray-900 time-display">
+              12:00
+            </div>
+          </div>
+        </div>
+
+        <!-- Expanded State: Search Input -->
+        <div id="mobile-search-expanded" class="hidden w-full">
+          <div class="flex-1 bg-white rounded-2xl shadow-xl px-5 py-4 flex items-center gap-3">
+            <i data-lucide="search" class="w-5 h-5 text-blue-600 flex-shrink-0"></i>
+            <input
+              type="text"
+              id="mobile-search-input"
+              placeholder="のりばや行き先を検索..."
+              class="flex-1 outline-none bg-transparent text-gray-900 placeholder-gray-400"
+            />
+            <button id="mobile-search-close-btn" class="flex-shrink-0 p-1 hover:bg-gray-100 rounded-full transition-colors">
+              <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Results Dropdown -->
+      <div id="mobile-search-results" class="hidden mt-2 bg-white rounded-2xl shadow-2xl max-h-[65vh] overflow-y-auto">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Bottom Action Buttons (Info) -->
+    <div id="mobile-action-buttons" class="absolute bottom-8 right-4 z-20 flex flex-col gap-3">
+      <button id="mobile-info-btn" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-blue-700 transition-all active:scale-95">
+        <i data-lucide="info" class="w-7 h-7"></i>
+      </button>
+    </div>
+
+    <!-- Bottom Drawer -->
+    <div
+      id="mobile-drawer"
+      class="absolute left-0 right-0 bottom-0 z-30 bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 ease-out translate-y-full"
+      style="height: 100%; touch-action: none;"
+    >
+      <!-- Handle -->
+      <div class="flex justify-center pt-4 pb-3" id="mobile-drawer-handle">
+        <div class="w-14 h-1.5 bg-gray-300 rounded-full"></div>
+      </div>
+
+      <!-- Drawer Content -->
+      <div class="h-full overflow-hidden flex flex-col">
+        
+        <!-- Drawer Header (Dynamic) -->
+        <div id="mobile-drawer-header" class="hidden px-5 pb-4 border-b border-gray-200 flex-shrink-0">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h2 id="mobile-drawer-title" class="text-xl text-gray-900 mb-2 font-semibold">Stop Name</h2>
+              <div id="mobile-drawer-badges" class="flex items-center gap-2 flex-wrap">
+                <!-- Badges populated by JS -->
+              </div>
+            </div>
+            <button id="mobile-drawer-close-btn" class="p-2.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0">
+              <i data-lucide="x" class="w-6 h-6 text-gray-600"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Drawer Body (Scrollable) -->
+        <div id="mobile-drawer-body" class="flex-1 overflow-y-auto">
+          
+          <!-- Selected Stop Content -->
+          <div id="mobile-stop-content" class="hidden p-5 space-y-5">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Default Info Content -->
+          <div id="mobile-info-content" class="p-6 text-center">
+            <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+              <svg class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+            </div>
+            <h3 class="text-xl text-gray-900 mb-2 font-semibold">OMIYA Bus Route</h3>
+            <p class="text-gray-600 mb-8">大宮駅バス案内システム</p>
+            
+            <div class="grid grid-cols-3 gap-3 mb-8">
+              <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 text-white shadow-lg">
+                <div class="text-3xl font-bold mb-1">9</div>
+                <div class="text-sm opacity-90">東口</div>
+              </div>
+              <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 text-white shadow-lg">
+                <div class="text-3xl font-bold mb-1">11</div>
+                <div class="text-sm opacity-90">西口</div>
+              </div>
+              <div class="bg-gradient-to-br from-gray-600 to-gray-700 rounded-2xl p-4 text-white shadow-lg">
+                <div class="text-3xl font-bold mb-1">20</div>
+                <div class="text-sm opacity-90">合計</div>
+              </div>
+            </div>
+
+            <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 mb-6">
+              <p class="text-gray-700 font-medium">
+                地図上のバス停をタップすると<br/>詳細情報が表示されます
+              </p>
+            </div>
+            
+            <!-- Legend -->
+            <div class="bg-gray-50 rounded-2xl p-5 text-left border border-gray-200">
+              <h4 class="text-gray-900 mb-4 text-center font-semibold">凡例</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-5 h-5 rounded-full bg-blue-600 flex-shrink-0 shadow-md"></div>
+                  <span class="text-sm text-gray-700 font-medium">東口</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-5 h-5 rounded-full bg-purple-600 flex-shrink-0 shadow-md"></div>
+                  <span class="text-sm text-gray-700 font-medium">西口</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-5 h-5 rounded-full bg-green-600 flex-shrink-0 shadow-md"></div>
+                  <span class="text-sm text-gray-700 font-medium">東武</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-5 h-5 rounded-full bg-orange-600 flex-shrink-0 shadow-md"></div>
+                  <span class="text-sm text-gray-700 font-medium">降車専用</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Padding -->
+          <div class="h-10"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- DESKTOP VIEW -->
+  <!-- ========================================== -->
+  <div id="desktop-view" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-gray-900">OMIYA Bus Route</h1>
+              <p class="text-sm text-gray-500">大宮駅バス案内システム</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-gray-500">現在時刻</p>
+            <p class="text-gray-900 time-display">
+              12:00
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column - Map and Search -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Search Panel -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-4">
+              <div class="relative">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input
+                  type="text"
+                  id="desktop-search-input"
+                  placeholder="のりばや行き先を検索..."
+                  class="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button id="desktop-search-clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <!-- Desktop Search Results -->
+              <div id="desktop-search-results" class="hidden mt-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div id="desktop-quick-stats" class="px-4 pb-4 grid grid-cols-3 gap-3">
+              <div class="bg-blue-50 rounded-lg p-3 text-center">
+                <div class="text-2xl text-blue-600 mb-1">9</div>
+                <div class="text-xs text-blue-700">東口のりば</div>
+              </div>
+              <div class="bg-purple-50 rounded-lg p-3 text-center">
+                <div class="text-2xl text-purple-600 mb-1">11</div>
+                <div class="text-xs text-purple-700">西口のりば</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3 text-center">
+                <div class="text-2xl text-gray-600 mb-1">20</div>
+                <div class="text-xs text-gray-700">合計</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Container -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-blue-600 to-indigo-600">
+              <h2 class="text-white">大宮駅周辺 バス停マップ</h2>
+              <p class="text-sm text-blue-100 mt-1">
+                バス停をクリックして詳細を表示
+              </p>
+            </div>
+            <div style="height: 600px;">
+              <div id="map-desktop" class="w-full h-full"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Route Info and Departures -->
+        <div class="space-y-6" id="right-column">
+          <!-- Default State -->
+          <div id="desktop-default-msg" class="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-gray-900 mb-2">バス停を選択してください</h3>
+            <p class="text-sm text-gray-500">
+              地図上のバス停をクリックすると、行き先と時刻表が表示されます
+            </p>
+          </div>
+
+          <!-- Selected State (Hidden by default) -->
+          <div id="desktop-selected-content" class="hidden space-y-6">
+            <!-- Route Panel -->
+            <div id="desktop-route-panel"></div>
+            <!-- Departure Board -->
+            <div id="desktop-departure-board"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="mt-6 bg-white rounded-xl shadow-lg p-4">
+        <h3 class="text-gray-900 mb-3">凡例</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full bg-blue-600"></div>
+            <span class="text-sm text-gray-600">東口バス停</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full bg-purple-600"></div>
+            <span class="text-sm text-gray-600">西口バス停</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full bg-green-600"></div>
+            <span class="text-sm text-gray-600">東武バス</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full bg-orange-600"></div>
+            <span class="text-sm text-gray-600">降車専用</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="./data.js"></script>
+  <script type="module" src="./script.js"></script>
+</body>
+</html>
