@@ -1,0 +1,1290 @@
+[
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MarugasakiHinomishita.2086.1",
+    "title": "丸ヶ崎火の見下",
+    "number": "1",
+    "lat": 35.95695,
+    "lon": 139.6533
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MinaminakanoChuuou.2237.2",
+    "title": "南中野中央",
+    "number": "2",
+    "lat": 35.90932,
+    "lon": 139.6556
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.11",
+    "title": "大宮駅東口",
+    "number": "11",
+    "lat": 35.9069,
+    "lon": 139.6275
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SaGiSanKinenKouen.2027.1",
+    "title": "さぎ山記念公園",
+    "number": "1",
+    "lat": 35.90875,
+    "lon": 139.6999
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Shibakawa.2124.2",
+    "title": "芝川",
+    "number": "2",
+    "lat": 35.91742,
+    "lon": 139.644
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiKyou.2008.99",
+    "title": "堀の内橋",
+    "number": "99",
+    "lat": 35.91084,
+    "lon": 139.6423
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiKyou.2008.1",
+    "title": "堀の内橋",
+    "number": "1",
+    "lat": 35.91084,
+    "lon": 139.6423
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Shibakawa.2124.1",
+    "title": "芝川",
+    "number": "1",
+    "lat": 35.91693,
+    "lon": 139.6431
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashioomiyaEki.2081.2",
+    "title": "東大宮駅",
+    "number": "2",
+    "lat": 35.9488,
+    "lon": 139.6407
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Takahana.2041.1",
+    "title": "高鼻",
+    "number": "1",
+    "lat": 35.90307,
+    "lon": 139.651
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KukiEki.1748.99",
+    "title": "久喜駅",
+    "number": "99",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OowadaIchiChoume.2073.1",
+    "title": "大和田一丁目",
+    "number": "1",
+    "lat": 35.9253,
+    "lon": 139.6473
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Marugasaki.2084.1",
+    "title": "丸ヶ崎",
+    "number": "1",
+    "lat": 35.95365,
+    "lon": 139.6498
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OowadaKouen.2129.2",
+    "title": "大和田公園",
+    "number": "2",
+    "lat": 35.92339,
+    "lon": 139.6405
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.DanchiHigashi.2051.1",
+    "title": "団地東（東新井団地）",
+    "number": "1",
+    "lat": 35.9063,
+    "lon": 139.6628
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashiboriNoUchi.2122.1",
+    "title": "東堀の内",
+    "number": "1",
+    "lat": 35.91353,
+    "lon": 139.6375
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JunouNiChoume.2128.1",
+    "title": "寿能二丁目",
+    "number": "1",
+    "lat": 35.922,
+    "lon": 139.6375
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KatayanagiShisho.2017.3",
+    "title": "片柳支所",
+    "number": "3",
+    "lat": 35.90972,
+    "lon": 139.6693
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Minaminakano.2013.1",
+    "title": "南中野",
+    "number": "1",
+    "lat": 35.90917,
+    "lon": 139.6573
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NishisambanGai.2092.2",
+    "title": "西三番街",
+    "number": "2",
+    "lat": 35.95738,
+    "lon": 139.663
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashiichibanGai.2088.2",
+    "title": "東一番街",
+    "number": "2",
+    "lat": 35.95405,
+    "lon": 139.6688
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HasudaNishishinjuku.1744.1",
+    "title": "蓮田西新宿",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NakayamaJinja.2047.1",
+    "title": "中山神社",
+    "number": "1",
+    "lat": 35.9002,
+    "lon": 139.6611
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KatayanagiShisho.2017.1",
+    "title": "片柳支所",
+    "number": "1",
+    "lat": 35.90923,
+    "lon": 139.6699
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashinibanGai.2090.2",
+    "title": "東二番街",
+    "number": "2",
+    "lat": 35.95698,
+    "lon": 139.67
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.UrawagakuinKoukouIriguchi.2030.1",
+    "title": "浦和学院高校入口",
+    "number": "1",
+    "lat": 35.90208,
+    "lon": 139.7037
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AmanumaIchiChoume.2006.1",
+    "title": "天沼一丁目",
+    "number": "1",
+    "lat": 35.90888,
+    "lon": 139.6394
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NichidaiMae.2014.3",
+    "title": "日大前",
+    "number": "3",
+    "lat": 35.90915,
+    "lon": 139.6612
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.TakaraJouInKa.2042.1",
+    "title": "宝乗院下",
+    "number": "1",
+    "lat": 35.90154,
+    "lon": 139.6516
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nishinakano.2012.2",
+    "title": "西中野",
+    "number": "2",
+    "lat": 35.90982,
+    "lon": 139.6527
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nakamaru.2070.2",
+    "title": "中丸",
+    "number": "2",
+    "lat": 35.91505,
+    "lon": 139.6523
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KashimaKyou.2123.2",
+    "title": "鹿島橋",
+    "number": "2",
+    "lat": 35.91435,
+    "lon": 139.6392
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SaitamaHigashiEigyouSho.1706.99",
+    "title": "さいたま東営業所",
+    "number": "99",
+    "lat": 35.9107893287287,
+    "lon": 139.69513485304492
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NakagawaSakagami.2011.1",
+    "title": "中川坂上",
+    "number": "1",
+    "lat": 35.91113,
+    "lon": 139.6509
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShiraokaNyu-taunIriguchi.1746.1",
+    "title": "白岡ニュータウン入口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShirubeMori.2072.2",
+    "title": "導守",
+    "number": "2",
+    "lat": 35.92038,
+    "lon": 139.6509
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.IsagoMachi.2078.1",
+    "title": "砂町",
+    "number": "1",
+    "lat": 35.94090314557571,
+    "lon": 139.6444750700329
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NodaHouei.2026.1",
+    "title": "野田宝永",
+    "number": "1",
+    "lat": 35.90875,
+    "lon": 139.6962
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HoriNoUchi.2120.1",
+    "title": "堀の内",
+    "number": "1",
+    "lat": 35.91212,
+    "lon": 139.6338
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AmanumaMachi.2009.2",
+    "title": "天沼町",
+    "number": "2",
+    "lat": 35.91135,
+    "lon": 139.645
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NegiWa.2022.1",
+    "title": "根木輪",
+    "number": "1",
+    "lat": 35.90403,
+    "lon": 139.6844
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NichidaiMae.2014.99",
+    "title": "日大前",
+    "number": "99",
+    "lat": 35.909644477840736,
+    "lon": 139.6616593702403
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShibakawaShimbashi.2010.2",
+    "title": "芝川新橋",
+    "number": "2",
+    "lat": 35.91155,
+    "lon": 139.6481
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.UrawaHigashiKoukouIriguchi.2028.1",
+    "title": "浦和東高校入口",
+    "number": "1",
+    "lat": 35.90647,
+    "lon": 139.7022
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HoriNoUchi.2120.3",
+    "title": "堀の内",
+    "number": "3",
+    "lat": 35.91203,
+    "lon": 139.635
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.IsagoMachiHarayama.2080.2",
+    "title": "砂町原山",
+    "number": "2",
+    "lat": 35.9478,
+    "lon": 139.6445
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SomeyaOriKaeJou.2067.99",
+    "title": "染谷折返場",
+    "number": "99",
+    "lat": 35.9153,
+    "lon": 139.6826
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaSakka-JouMae.2118.2",
+    "title": "大宮サッカー場前",
+    "number": "2",
+    "lat": 35.91712,
+    "lon": 139.6355
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiKyou.2008.2",
+    "title": "堀の内橋",
+    "number": "2",
+    "lat": 35.91063,
+    "lon": 139.6422
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nishiyama.1707.1",
+    "title": "西山",
+    "number": "1",
+    "lat": 35.90253,
+    "lon": 139.6779
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Futatsuya.1732.1",
+    "title": "二ツ家",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashisambanGai.2089.2",
+    "title": "東三番街",
+    "number": "2",
+    "lat": 35.95496,
+    "lon": 139.6706
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KounosuEkiHigashiguchi.1734.99",
+    "title": "鴻巣駅東口",
+    "number": "99",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.FukaSakuchuu.2087.99",
+    "title": "深作中",
+    "number": "99",
+    "lat": 35.9529,
+    "lon": 139.6663
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nakanoda.2032.1",
+    "title": "中野田",
+    "number": "1",
+    "lat": 35.89779,
+    "lon": 139.7079
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ToubuRisaikuruSenta-.2063.99",
+    "title": "東部リサイクルセンター",
+    "number": "99",
+    "lat": 35.92852,
+    "lon": 139.6881
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OoyaKeneiJuutaku.2058.99",
+    "title": "大谷県営住宅",
+    "number": "99",
+    "lat": 35.92333,
+    "lon": 139.6724
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nakamaru.2070.1",
+    "title": "中丸",
+    "number": "1",
+    "lat": 35.9155,
+    "lon": 139.6522
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AgeoEkiHigashiguchi.1729.1",
+    "title": "上尾駅東口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShimekiriKyou.2025.1",
+    "title": "締切橋",
+    "number": "1",
+    "lat": 35.9077,
+    "lon": 139.6944
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nishiura.2049.1",
+    "title": "西浦",
+    "number": "1",
+    "lat": 35.90508,
+    "lon": 139.6569
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KatayanagiShougakkou.2018.1",
+    "title": "片柳小学校",
+    "number": "1",
+    "lat": 35.9093,
+    "lon": 139.6716
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NodaShougakkou.2031.1",
+    "title": "野田小学校",
+    "number": "1",
+    "lat": 35.90017,
+    "lon": 139.7052
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Minaminakano.2013.2",
+    "title": "南中野",
+    "number": "2",
+    "lat": 35.90903,
+    "lon": 139.659
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.UrawaHigashiKoukou.2068.99",
+    "title": "浦和東高校",
+    "number": "99",
+    "lat": 35.90997,
+    "lon": 139.7067
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Oowada.2125.2",
+    "title": "大和田",
+    "number": "2",
+    "lat": 35.91927,
+    "lon": 139.648
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.A-banMiRai.2093.2",
+    "title": "アーバンみらい（春野図書館）",
+    "number": "2",
+    "lat": 35.95868,
+    "lon": 139.6606
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OwadaEkiIriguchi.2075.1",
+    "title": "大和田駅入口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.InaSakae.1742.1",
+    "title": "伊奈栄",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KashimaKyou.2123.1",
+    "title": "鹿島橋",
+    "number": "1",
+    "lat": 35.91427,
+    "lon": 139.639
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SomeyaKita.2066.1",
+    "title": "染谷北",
+    "number": "1",
+    "lat": 35.91182,
+    "lon": 139.6839
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SomeyaMinami.2064.1",
+    "title": "染谷南",
+    "number": "1",
+    "lat": 35.90722,
+    "lon": 139.6872
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.IchiNoKubo.2254.2",
+    "title": "一ノ久保",
+    "number": "2",
+    "lat": 35.91267,
+    "lon": 139.6545
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SomeyaIriguchi.2019.1",
+    "title": "染谷入口",
+    "number": "1",
+    "lat": 35.90895,
+    "lon": 139.6743
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HikawaSandou.2003.2",
+    "title": "氷川参道",
+    "number": "2",
+    "lat": 35.9075,
+    "lon": 139.6315
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HikawaSandou.2003.1",
+    "title": "氷川参道",
+    "number": "1",
+    "lat": 35.90759,
+    "lon": 139.6316
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KouHanaNiChoume.2119.2",
+    "title": "高鼻二丁目",
+    "number": "2",
+    "lat": 35.91327,
+    "lon": 139.6342
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NichidaiMae.2014.1",
+    "title": "日大前",
+    "number": "1",
+    "lat": 35.90945,
+    "lon": 139.6617
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Minaminakano.2013.3",
+    "title": "南中野",
+    "number": "3",
+    "lat": 35.90897,
+    "lon": 139.6572
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Momijigaoka.2076.1",
+    "title": "紅葉ヶ丘",
+    "number": "1",
+    "lat": 36.03148570581217,
+    "lon": 139.63277509379128
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashioomiyaGoChoume.2079.1",
+    "title": "東大宮五丁目",
+    "number": "1",
+    "lat": 35.948830124612,
+    "lon": 139.6406673131366
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.UrawagakuinKoukou.2033.99",
+    "title": "浦和学院高校",
+    "number": "99",
+    "lat": 35.90255,
+    "lon": 139.705
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Hizako.2060.2",
+    "title": "膝子",
+    "number": "2",
+    "lat": 35.92327,
+    "lon": 139.6827
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OowadaSakagami.2130.1",
+    "title": "大和田坂上",
+    "number": "1",
+    "lat": 35.92495,
+    "lon": 139.6449
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShirubeMori.2072.4",
+    "title": "導守",
+    "number": "4",
+    "lat": 35.92045,
+    "lon": 139.6503
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiSanChoume.2121.2",
+    "title": "堀の内三丁目",
+    "number": "2",
+    "lat": 35.91278,
+    "lon": 139.6361
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.TaishouZaka.2040.1",
+    "title": "大正坂",
+    "number": "1",
+    "lat": 35.9058,
+    "lon": 139.6502
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HoriNoUchi.2120.2",
+    "title": "堀の内",
+    "number": "2",
+    "lat": 35.91125,
+    "lon": 139.6338
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SomeyaNaka.2065.1",
+    "title": "染谷中",
+    "number": "1",
+    "lat": 35.90963,
+    "lon": 139.6858
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShiraokaEki.1745.1",
+    "title": "白岡駅",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Kamiyamaguchi.2043.1",
+    "title": "上山口",
+    "number": "1",
+    "lat": 35.8996,
+    "lon": 139.6524
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KatayanagiYuubinKyoku.2016.1",
+    "title": "片柳郵便局",
+    "number": "1",
+    "lat": 35.90937,
+    "lon": 139.667
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AzumamachiIchiChoume.2004.1",
+    "title": "東町一丁目（大宮区）",
+    "number": "1",
+    "lat": 35.9077,
+    "lon": 139.6338
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KouOoya.2056.1",
+    "title": "向大谷",
+    "number": "1",
+    "lat": 35.91715,
+    "lon": 139.6707
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MisakiDai.2024.1",
+    "title": "三崎台",
+    "number": "1",
+    "lat": 35.90569,
+    "lon": 139.6907
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Famiri-TaunNishi.2095.2",
+    "title": "ファミリータウン西",
+    "number": "2",
+    "lat": 35.96105,
+    "lon": 139.6568
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OoyaShimoda.2059.1",
+    "title": "大谷下田",
+    "number": "1",
+    "lat": 35.91993,
+    "lon": 139.6761
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NakagawaSakagami.2011.2",
+    "title": "中川坂上",
+    "number": "2",
+    "lat": 35.91168,
+    "lon": 139.6503
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.7",
+    "title": "大宮駅東口",
+    "number": "7",
+    "lat": 35.9066,
+    "lon": 139.6259
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Yahata.2038.1",
+    "title": "八幡",
+    "number": "1",
+    "lat": 35.90835,
+    "lon": 139.6524
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MarugasakiIppommatsu.2082.1",
+    "title": "丸ヶ崎一本松",
+    "number": "1",
+    "lat": 35.95018,
+    "lon": 139.6466
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OkegawaEkiIriguchi.1731.1",
+    "title": "桶川駅入口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HarunoShougakkou.2091.2",
+    "title": "春野小学校",
+    "number": "2",
+    "lat": 35.9576,
+    "lon": 139.6684
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.DaiMiyahigashiKoukou.2062.1",
+    "title": "大宮東高校",
+    "number": "1",
+    "lat": 35.92792,
+    "lon": 139.6851
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.DetoKyou.2085.1",
+    "title": "出戸橋",
+    "number": "1",
+    "lat": 35.95561,
+    "lon": 139.6512
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AmanumaMachi.2009.1",
+    "title": "天沼町",
+    "number": "1",
+    "lat": 35.91143,
+    "lon": 139.6454
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.6",
+    "title": "大宮駅東口",
+    "number": "6",
+    "lat": 35.90655,
+    "lon": 139.6257
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HoriNoUchi.2120.4",
+    "title": "堀の内",
+    "number": "4",
+    "lat": 35.91192,
+    "lon": 139.6347
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.DaiMiyahigashiKoukouIriguchi.2061.2",
+    "title": "大宮東高校入口",
+    "number": "2",
+    "lat": 35.92555,
+    "lon": 139.6806
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaShougyou.2074.1",
+    "title": "大宮商業",
+    "number": "1",
+    "lat": 35.92640822478891,
+    "lon": 139.64669518739188
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AmanumaIchiChoume.2006.2",
+    "title": "天沼一丁目",
+    "number": "2",
+    "lat": 35.90843,
+    "lon": 139.6385
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyakouenIriguchi.2126.1",
+    "title": "大宮公園入口",
+    "number": "1",
+    "lat": 35.91955,
+    "lon": 139.6354
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NakamaruKa.2039.1",
+    "title": "中丸下",
+    "number": "1",
+    "lat": 35.91003,
+    "lon": 139.6493
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Namburyoutsuji.1529.1",
+    "title": "南部領辻",
+    "number": "1",
+    "lat": 35.8952,
+    "lon": 139.7112
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Koushinduka.2015.1",
+    "title": "庚申塚",
+    "number": "1",
+    "lat": 35.90972,
+    "lon": 139.6641
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Daiyama.2029.1",
+    "title": "代山",
+    "number": "1",
+    "lat": 35.90487,
+    "lon": 139.7027
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashiboriNoUchi.2122.2",
+    "title": "東堀の内",
+    "number": "2",
+    "lat": 35.91347,
+    "lon": 139.6375
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MiyaharaEkiIriguchi.1728.1",
+    "title": "宮原駅入口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.DanchiMinami.2052.1",
+    "title": "団地南（東新井団地）",
+    "number": "1",
+    "lat": 35.90368,
+    "lon": 139.6641
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HasudaEkiNishiguchi.1743.1",
+    "title": "蓮田駅西口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.IsagoMachiHarayama.2080.1",
+    "title": "砂町原山",
+    "number": "1",
+    "lat": 35.94776,
+    "lon": 139.6444
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShibakawaShimbashi.2010.1",
+    "title": "芝川新橋",
+    "number": "1",
+    "lat": 35.91157,
+    "lon": 139.6479
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AzumamachiNiChoume.2204.2",
+    "title": "東町二丁目（大宮区）",
+    "number": "2",
+    "lat": 35.909,
+    "lon": 139.6341
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.SomeyaShindou.2023.1",
+    "title": "染谷新道",
+    "number": "1",
+    "lat": 35.90492,
+    "lon": 139.6872
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KitamotoEkiIriguchi.1733.1",
+    "title": "北本駅入口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MinamiboriNoUchi.2005.1",
+    "title": "南堀の内",
+    "number": "1",
+    "lat": 35.90777,
+    "lon": 139.6366
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShinshiraokaEki.1747.1",
+    "title": "新白岡駅",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OowadaIchiChoume.2073.2",
+    "title": "大和田一丁目",
+    "number": "2",
+    "lat": 35.92493,
+    "lon": 139.6475
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OosunaDochuuGakkou.2077.1",
+    "title": "大砂土中学校",
+    "number": "1",
+    "lat": 35.93696283821514,
+    "lon": 139.6458041033662
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nishinakano.2012.1",
+    "title": "西中野",
+    "number": "1",
+    "lat": 35.90982,
+    "lon": 139.653
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nakagawa.2037.1",
+    "title": "中川",
+    "number": "1",
+    "lat": 35.90815,
+    "lon": 139.6498
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Miyamae.2046.1",
+    "title": "宮前",
+    "number": "1",
+    "lat": 35.89878,
+    "lon": 139.6621
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.YonoDou.2044.1",
+    "title": "与野道",
+    "number": "1",
+    "lat": 35.89845,
+    "lon": 139.6548
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JichiidaiIryouSenta-.2036.1",
+    "title": "自治医大医療センター",
+    "number": "1",
+    "lat": 35.90703,
+    "lon": 139.6462
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.EnzouInKa.2045.1",
+    "title": "円蔵院下",
+    "number": "1",
+    "lat": 35.89795,
+    "lon": 139.6572
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShiritsuByouin.1577.99",
+    "title": "市立病院（さいたま市緑区）",
+    "number": "99",
+    "lat": 35.89104,
+    "lon": 139.6783
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JichiidaiIryouSenta-Iriguchi.2035.1",
+    "title": "自治医大医療センター入口",
+    "number": "1",
+    "lat": 35.90802,
+    "lon": 139.6462
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.IchiNoKubo.2254.1",
+    "title": "一ノ久保",
+    "number": "1",
+    "lat": 35.91257,
+    "lon": 139.6545
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiSanChoume.2121.1",
+    "title": "堀の内三丁目",
+    "number": "1",
+    "lat": 35.9127,
+    "lon": 139.6361
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Gembashinden.2251.1",
+    "title": "玄蕃新田",
+    "number": "1",
+    "lat": 35.89012,
+    "lon": 139.7168
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OowadaSakagami.2130.2",
+    "title": "大和田坂上",
+    "number": "2",
+    "lat": 35.92492,
+    "lon": 139.6449
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashioomiyaRokuChoume.2083.1",
+    "title": "東大宮六丁目",
+    "number": "1",
+    "lat": 35.95175,
+    "lon": 139.6478
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Sanson.2021.1",
+    "title": "山村",
+    "number": "1",
+    "lat": 35.90483,
+    "lon": 139.6795
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.9",
+    "title": "大宮駅東口",
+    "number": "9",
+    "lat": 35.90675,
+    "lon": 139.6265
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaOokadoMachi.2002.1",
+    "title": "大宮大門町",
+    "number": "1",
+    "lat": 35.90715,
+    "lon": 139.6288
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Takai.2069.1",
+    "title": "高井",
+    "number": "1",
+    "lat": 35.91317,
+    "lon": 139.6527
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AzumamachiNiChoume.2204.1",
+    "title": "東町二丁目（大宮区）",
+    "number": "1",
+    "lat": 35.90928,
+    "lon": 139.6341
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.99",
+    "title": "大宮駅東口",
+    "number": "99",
+    "lat": 35.90647,
+    "lon": 139.6259
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OguraShiraoka.2054.1",
+    "title": "御蔵白岡",
+    "number": "1",
+    "lat": 35.91137,
+    "lon": 139.6692
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Komatsudai.2055.1",
+    "title": "小松台",
+    "number": "1",
+    "lat": 35.91528,
+    "lon": 139.6702
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Takai.2069.2",
+    "title": "高井",
+    "number": "2",
+    "lat": 35.91319,
+    "lon": 139.6528
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JunouJuutaku.2127.2",
+    "title": "寿能住宅",
+    "number": "2",
+    "lat": 35.9212,
+    "lon": 139.6353
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MinamiOotoriDaiJuutaku.2253.2",
+    "title": "南鳳台住宅",
+    "number": "2",
+    "lat": 35.91228,
+    "lon": 139.6567
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MinamiOotoriDaiJuutaku.2253.1",
+    "title": "南鳳台住宅",
+    "number": "1",
+    "lat": 35.9122,
+    "lon": 139.6567
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Minamidai.1578.1",
+    "title": "南台",
+    "number": "1",
+    "lat": 35.89855,
+    "lon": 139.6791
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Oowada.2125.1",
+    "title": "大和田",
+    "number": "1",
+    "lat": 35.9194,
+    "lon": 139.6482
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KitaAgeoEkiIriguchi.1730.1",
+    "title": "北上尾駅入口",
+    "number": "1",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiIchiChoume.2007.2",
+    "title": "堀の内一丁目",
+    "number": "2",
+    "lat": 35.90912,
+    "lon": 139.6402
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyakouenIriguchi.2126.2",
+    "title": "大宮公園入口",
+    "number": "2",
+    "lat": 35.91917,
+    "lon": 139.6356
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.MinamiboriNoUchi.2005.2",
+    "title": "南堀の内",
+    "number": "2",
+    "lat": 35.90768,
+    "lon": 139.6363
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.UrawaDaigakuIriguchi.1528.1",
+    "title": "浦和大学入口",
+    "number": "1",
+    "lat": 35.8922,
+    "lon": 139.7146
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.ShirubeMori.2072.1",
+    "title": "導守",
+    "number": "1",
+    "lat": 35.92022,
+    "lon": 139.6509
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashiaraiDanchi.2053.99",
+    "title": "東新井団地",
+    "number": "99",
+    "lat": 35.90528,
+    "lon": 139.6605
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.4",
+    "title": "大宮駅東口",
+    "number": "4",
+    "lat": 35.9063,
+    "lon": 139.6252
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Ooya.2057.1",
+    "title": "大谷",
+    "number": "1",
+    "lat": 35.91858,
+    "lon": 139.6712
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JunouNiChoume.2128.2",
+    "title": "寿能二丁目",
+    "number": "2",
+    "lat": 35.922,
+    "lon": 139.6374
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HigashioomiyaEkiNishiguchi.1741.1",
+    "title": "東大宮駅西口",
+    "number": "1",
+    "lat": 35.9488172103965,
+    "lon": 139.63992950989916
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NakagawaTenjin.2048.1",
+    "title": "中川天神",
+    "number": "1",
+    "lat": 35.90294,
+    "lon": 139.6588
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OowadaKouen.2129.1",
+    "title": "大和田公園",
+    "number": "1",
+    "lat": 35.92339,
+    "lon": 139.6404
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.TakaiKita.2071.1",
+    "title": "高井北",
+    "number": "1",
+    "lat": 35.91757,
+    "lon": 139.652
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Ueyama.2020.1",
+    "title": "上山",
+    "number": "1",
+    "lat": 35.90665,
+    "lon": 139.6763
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AmanumaMachi.2009.99",
+    "title": "天沼町",
+    "number": "99",
+    "lat": 35.91143,
+    "lon": 139.6454
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JunouJuutaku.2127.1",
+    "title": "寿能住宅",
+    "number": "1",
+    "lat": 35.9213,
+    "lon": 139.6351
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.KouHanaNiChoume.2119.1",
+    "title": "高鼻二丁目",
+    "number": "1",
+    "lat": 35.91402,
+    "lon": 139.6344
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AmanumaChuuouDoori.2034.1",
+    "title": "天沼中央通り",
+    "number": "1",
+    "lat": 35.90782,
+    "lon": 139.6404
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Famiri-TaunIriguchi.2096.2",
+    "title": "ファミリータウン入口",
+    "number": "2",
+    "lat": 35.9608,
+    "lon": 139.6539
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaSakka-JouMae.2118.1",
+    "title": "大宮サッカー場前",
+    "number": "1",
+    "lat": 35.91758,
+    "lon": 139.6354
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Puromuna-doChuuou.2094.2",
+    "title": "プロムナード中央",
+    "number": "2",
+    "lat": 35.95953,
+    "lon": 139.6594
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.JichiidaiIryouSenta-.2036.99",
+    "title": "自治医大医療センター",
+    "number": "99",
+    "lat": 35.90703,
+    "lon": 139.6463
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.Nishiura.2049.99",
+    "title": "西浦",
+    "number": "99",
+    "lat": 35.90512,
+    "lon": 139.657
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.HorinouchiIchiChoume.2007.1",
+    "title": "堀の内一丁目",
+    "number": "1",
+    "lat": 35.9094,
+    "lon": 139.6405
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.NakagawaChuuouDoori.2050.1",
+    "title": "中川中央通り",
+    "number": "1",
+    "lat": 35.908,
+    "lon": 139.6544
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.UrawaMisonoEkiNishiguchi.2248.99",
+    "title": "浦和美園駅西口",
+    "number": "99",
+    "lat": 35.89402,
+    "lon": 139.7273
+  },
+  {
+    "id": "odpt.BusstopPole:KokusaiKogyoBus.AzumamachiIchiChoume.2004.2",
+    "title": "東町一丁目（大宮区）",
+    "number": "2",
+    "lat": 35.90763,
+    "lon": 139.6336
+  }
+]

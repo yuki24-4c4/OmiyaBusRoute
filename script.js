@@ -1,5 +1,302 @@
 
-import { busStops, routes, getDepartures, getBusStopById, getRouteById } from './data.js';
+import rawKokusai from './kokusai_bus.json' assert { type: 'json' };
+
+const PATTERN_URL = import.meta.env.kokusai_pattern_URL;
+const BUSSTOP_URL = import.meta.env.kokusai_busstop_URL;
+const TOKEN = import.meta.env.token;
+const PATTERN_BASE = PATTERN_URL ? PATTERN_URL.split('?')[0] : '';
+const BUSSTOP_BASE = BUSSTOP_URL ? BUSSTOP_URL.split('?')[0] : '';
+
+const ROUTE_COLORS = [
+  '#e11d48', '#2563eb', '#059669', '#d97706', '#7c3aed',
+  '#0ea5e9', '#84cc16', '#ec4899', '#f97316', '#14b8a6',
+];
+
+const DEFAULT_OPERATOR = 'odpt.Operator:KokusaiKogyoBus';
+
+// バス停ID -> 座標キャッシュ（JSON読み込み分＋API取得分）
+const busstopCoordCache = new Map();
+let busstopCacheLoaded = false;
+const patternCache = new Map(); // パターンID -> { id, coords }
+let patternCacheLoaded = false;
+let activeRouteStopIds = new Set(); // ルート上に含める停留所
+let showRouteOnly = true;
+
+// kokusai_bus.json だけを元にした停留所データ
+const busStops = (rawKokusai ?? [])
+  .filter((stop) => typeof stop.lat === 'number' && typeof stop.lon === 'number')
+  .map((stop) => ({
+    id: stop.id,
+    name: stop.title,
+    area: 'route', // 駅東西区分が無いので中立扱い
+    position: { x: 0, y: 0 },
+    coordinates: { lat: stop.lat, lng: stop.lon },
+    operator: 'kokusai',
+    isDropOffOnly: false,
+    isOmiyaStation: false,
+    destinations: [],
+    routes: [],
+    number: stop.number,
+  }));
+
+// JSONにある座標をキャッシュへ
+busStops.forEach(stop => {
+  busstopCoordCache.set(stop.id, { lat: stop.coordinates.lat, lon: stop.coordinates.lng, patterns: [] });
+});
+
+const routes = [];
+
+function getBusStopById(id) {
+  return busStops.find((stop) => stop.id === id);
+}
+
+function getRouteById(_id) {
+  return undefined;
+}
+
+function getDepartures() {
+  return [];
+}
+
+async function fetchBusstopPatterns(stopId) {
+    if (!BUSSTOP_URL || !TOKEN) return [];
+
+    await ensureAllBusstopsCached();
+    // キャッシュにあればそれを返す
+    const cached = busstopCoordCache.get(stopId);
+    if (cached?.patterns && cached.patterns.length > 0) {
+        return [...new Set(cached.patterns)];
+    }
+
+    // キャッシュに無い場合のみ単発リクエスト（owl:sameAs + operator）
+    const url = new URL(BUSSTOP_BASE || BUSSTOP_URL);
+    url.searchParams.set('owl:sameAs', stopId);
+    url.searchParams.set('odpt:operator', DEFAULT_OPERATOR);
+    url.searchParams.set('acl:consumerKey', TOKEN);
+    console.log('[ODPT] BusstopPole request', url.toString());
+    const res = await fetch(url.toString());
+    console.log('[ODPT] BusstopPole status', res.status);
+    if (!res.ok) throw new Error(`BusstopPole fetch failed: ${res.status}`);
+    const data = await res.json();
+    console.log('[ODPT] BusstopPole response', data?.length ?? 0, 'records');
+
+    const patternSet = new Set();
+    data.forEach(item => {
+        const patterns = item['odpt:busroutePattern'] || item['odpt:busRoutePattern'] || [];
+        patterns.forEach(p => patternSet.add(p));
+    });
+
+    const patterns = Array.from(patternSet);
+    busstopCoordCache.set(stopId, {
+        ...(cached || {}),
+        patterns,
+    });
+    return patterns;
+}
+
+async function fetchBusstopDetail(poleId) {
+    // 既に座標があれば再リクエストしない
+    const cached = busstopCoordCache.get(poleId);
+    if (cached && typeof cached.lat === 'number' && typeof cached.lon === 'number') {
+        return cached;
+    }
+    if (!BUSSTOP_URL || !TOKEN) return null;
+    const url = new URL(BUSSTOP_BASE || BUSSTOP_URL);
+    url.searchParams.set('owl:sameAs', poleId);
+    url.searchParams.set('odpt:operator', DEFAULT_OPERATOR);
+    url.searchParams.set('acl:consumerKey', TOKEN);
+    console.log('[ODPT] BusstopPole detail request', url.toString());
+    const res = await fetch(url.toString());
+    console.log('[ODPT] BusstopPole detail status', res.status);
+    if (!res.ok) throw new Error(`BusstopPole detail fetch failed: ${res.status}`);
+    const data = await res.json();
+    console.log('[ODPT] BusstopPole detail response', poleId, data?.length ?? 0, 'records');
+
+    const record = data[0];
+    if (!record) return null;
+    const lat = record['geo:lat'] ?? record['odpt:latitude'];
+    const lon = record['geo:long'] ?? record['odpt:longitude'];
+    const patterns = record['odpt:busroutePattern'] || record['odpt:busRoutePattern'] || [];
+    if (typeof lat === 'number' && typeof lon === 'number') {
+        busstopCoordCache.set(poleId, { lat, lon, patterns });
+        return { lat, lon, patterns };
+    }
+    return { lat: undefined, lon: undefined, patterns };
+}
+
+async function fetchPatternDetail(patternId) {
+    if (!PATTERN_URL || !TOKEN) return null;
+    // まずキャッシュを確認
+    const cached = patternCache.get(patternId);
+    if (cached) return cached;
+
+    // パターン全取得キャッシュがある場合はそれを使う
+    if (patternCacheLoaded) {
+        return patternCache.get(patternId) || null;
+    }
+
+    const fetchOnce = async (withOperator) => {
+        const url = new URL(PATTERN_BASE || PATTERN_URL);
+        url.searchParams.set('odpt:busroutePattern', patternId);
+        url.searchParams.set('acl:consumerKey', TOKEN);
+        if (withOperator) url.searchParams.set('odpt:operator', DEFAULT_OPERATOR);
+        console.log('[ODPT] Pattern request', url.toString());
+        const res = await fetch(url.toString());
+        console.log('[ODPT] Pattern status', res.status, 'operator:', withOperator ? 'set' : 'none');
+        if (!res.ok) throw new Error(`Pattern fetch failed: ${res.status}`);
+        const data = await res.json();
+        console.log('[ODPT] Pattern response', patternId, data?.length ?? 0, 'records');
+        return data;
+    };
+
+    // operator なし優先、0件なら operator あり
+    let data = await fetchOnce(false);
+    if (!data || data.length === 0) {
+        try {
+            data = await fetchOnce(true);
+        } catch (e) {
+            console.error('Pattern fetch with operator failed', e);
+        }
+    }
+
+    const record = data && data[0];
+    if (!record) {
+        console.warn('[ODPT] Pattern not found', patternId);
+        return null;
+    }
+    const orders = record['odpt:busstopPoleOrder'] || record['odpt:busStopPoleOrder'] || [];
+    const coords = [];
+    const stops = [];
+    for (const o of orders) {
+        const poleId = o['odpt:busstopPole'] || o['odpt:busStopPole'];
+        if (!poleId) continue;
+        stops.push(poleId);
+        const detail = await fetchBusstopDetail(poleId);
+        if (detail && typeof detail.lat === 'number' && typeof detail.lon === 'number') {
+            coords.push([detail.lat, detail.lon]);
+        }
+    }
+    const result = { id: patternId, coords, stops };
+    patternCache.set(patternId, result);
+    return result;
+}
+
+async function ensureAllBusstopsCached() {
+    if (busstopCacheLoaded || !BUSSTOP_URL || !TOKEN) return;
+    const url = new URL(BUSSTOP_BASE || BUSSTOP_URL);
+    url.searchParams.set('odpt:operator', DEFAULT_OPERATOR);
+    url.searchParams.set('acl:consumerKey', TOKEN);
+    console.log('[ODPT] BusstopPole ALL request', url.toString());
+    try {
+        const res = await fetch(url.toString());
+        console.log('[ODPT] BusstopPole ALL status', res.status);
+        if (!res.ok) throw new Error(`BusstopPole ALL fetch failed: ${res.status}`);
+        const data = await res.json();
+        console.log('[ODPT] BusstopPole ALL response', data?.length ?? 0, 'records');
+        if (Array.isArray(data)) {
+            data.forEach(item => {
+                const id = item['owl:sameAs'] || item['odpt:busstopPole'];
+                const lat = item['geo:lat'] ?? item['odpt:latitude'];
+                const lon = item['geo:long'] ?? item['odpt:longitude'];
+                const patterns = item['odpt:busroutePattern'] || item['odpt:busRoutePattern'] || [];
+                if (id && typeof lat === 'number' && typeof lon === 'number') {
+                    busstopCoordCache.set(id, { lat, lon, patterns });
+                }
+            });
+        }
+        busstopCacheLoaded = true;
+    } catch (e) {
+        console.error('BusstopPole ALL fetch error', e);
+    }
+}
+
+async function ensureAllPatternsCached() {
+    if (patternCacheLoaded || !PATTERN_URL || !TOKEN) return;
+    const url = new URL(PATTERN_BASE || PATTERN_URL);
+    url.searchParams.set('odpt:operator', DEFAULT_OPERATOR);
+    url.searchParams.set('acl:consumerKey', TOKEN);
+    console.log('[ODPT] BusroutePattern ALL request', url.toString());
+    try {
+        const res = await fetch(url.toString());
+        console.log('[ODPT] BusroutePattern ALL status', res.status);
+        if (!res.ok) throw new Error(`BusroutePattern ALL fetch failed: ${res.status}`);
+        const data = await res.json();
+        console.log('[ODPT] BusroutePattern ALL response', data?.length ?? 0, 'records');
+        if (Array.isArray(data)) {
+            for (const record of data) {
+                const patternId = record['owl:sameAs'] || record['@id'];
+                if (!patternId) continue;
+                const orders = record['odpt:busstopPoleOrder'] || record['odpt:busStopPoleOrder'] || [];
+                const coords = [];
+                const stops = [];
+                for (const o of orders) {
+                    const poleId = o['odpt:busstopPole'] || o['odpt:busStopPole'];
+                    if (!poleId) continue;
+                    stops.push(poleId);
+                    const detail = busstopCoordCache.get(poleId) || await fetchBusstopDetail(poleId);
+                    if (detail && typeof detail.lat === 'number' && typeof detail.lon === 'number') {
+                        coords.push([detail.lat, detail.lon]);
+                    }
+                }
+                patternCache.set(patternId, { id: patternId, coords, stops });
+            }
+        }
+        patternCacheLoaded = true;
+    } catch (e) {
+        console.error('BusroutePattern ALL fetch error', e);
+    }
+}
+
+function clearRouteLayers() {
+    if (!mapInstance) return;
+    state.routeLayers.forEach(layer => mapInstance.removeLayer(layer));
+    state.routeLayers = [];
+    activeRouteStopIds = new Set();
+    updateRouteToggleLabel();
+}
+
+function drawPatternPolyline(patternId, coords, color) {
+    if (!mapInstance) return;
+    if (!coords || coords.length < 2) {
+        console.warn('[ODPT] Pattern has insufficient coords', patternId);
+        return;
+    }
+    const layer = L.polyline(coords, {
+        color,
+        weight: 5,
+        opacity: 0.7,
+    }).addTo(mapInstance);
+    layer.bindPopup(`パターン: ${patternId}`);
+    state.routeLayers.push(layer);
+}
+
+async function loadPatternsForStop(stop) {
+    clearRouteLayers();
+    activeRouteStopIds = new Set();
+    if (!stop || !mapInstance) return;
+    if (!PATTERN_URL || !BUSSTOP_URL || !TOKEN) {
+        console.warn('ODPTのエンドポイントまたはトークンが設定されていません (.env を確認してください)');
+        return;
+    }
+    try {
+        await ensureAllBusstopsCached();
+        await ensureAllPatternsCached();
+        const patternIds = await fetchBusstopPatterns(stop.id);
+        const details = await Promise.all(patternIds.map(pid => fetchPatternDetail(pid)));
+        console.log('[ODPT] Drawing patterns', patternIds);
+        details.forEach((detail, idx) => {
+            if (!detail || !detail.coords || detail.coords.length < 2) return;
+            const color = ROUTE_COLORS[idx % ROUTE_COLORS.length];
+            drawPatternPolyline(detail.id, detail.coords, color);
+            detail.stops?.forEach(id => activeRouteStopIds.add(id));
+        });
+        updateRouteToggleLabel();
+        // ルート上以外を一時非表示にするため再描画
+        renderMarkers();
+    } catch (err) {
+        console.error('パターン取得に失敗しました', err);
+    }
+}
 
 // Global State
 let state = {
@@ -8,6 +305,7 @@ let state = {
     isMobile: window.innerWidth < 1024,
     map: null,
     markers: new Map(),
+    routeLayers: [],
     drawerHeight: 'collapsed', // 'collapsed', 'peek', 'half', 'full'
     expandedRoutes: new Set(), // For RoutePanel
     currentTime: new Date()
@@ -114,7 +412,10 @@ function renderMarkers() {
     if (!mapInstance) return;
 
     // Filter stops based on search
-    const filteredStops = filterStops(state.searchQuery);
+    let filteredStops = filterStops(state.searchQuery);
+    if (showRouteOnly && activeRouteStopIds.size > 0) {
+        filteredStops = filteredStops.filter(stop => activeRouteStopIds.has(stop.id));
+    }
 
     // Remove markers not in filtered list
     state.markers.forEach((marker, id) => {
@@ -130,7 +431,8 @@ function renderMarkers() {
 
         // Determine styles
         const isSelected = state.selectedStop?.id === stop.id;
-        const areaColor = stop.area === 'east' ? '#2563eb' : stop.area === 'west' ? '#9333ea' : '#8b5cf6';
+        const onRoute = activeRouteStopIds.size === 0 ? false : activeRouteStopIds.has(stop.id);
+        const baseColor = onRoute ? '#0ea5e9' : (stop.area === 'east' ? '#2563eb' : stop.area === 'west' ? '#9333ea' : '#8b5cf6');
         const operatorColor =
             stop.operator === 'tobu' ? '#00A040' :
                 stop.operator === 'seibu' ? '#FFD700' :
@@ -144,7 +446,7 @@ function renderMarkers() {
             position: absolute;
             width: 56px;
             height: 56px;
-            background: ${areaColor};
+            background: ${baseColor};
             border-radius: 50%;
             animation: pulse 1.5s ease-out infinite;
             opacity: 0.75;
@@ -155,8 +457,8 @@ function renderMarkers() {
         <div style="
           width: ${isSelected ? '40px' : (stop.isDropOffOnly ? '40px' : '32px')};
           height: ${isSelected ? '40px' : (stop.isDropOffOnly ? '40px' : '32px')};
-          background: ${stop.isDropOffOnly ? '#f97316' : areaColor};
-          border-radius: 50%;
+          background: ${stop.isDropOffOnly ? '#f97316' : baseColor};
+          border-radius: ${onRoute ? '12px' : '50%'};
           display: flex;
           align-items: center;
           justify-content: center;
@@ -169,7 +471,7 @@ function renderMarkers() {
         ">
           ${stop.isDropOffOnly ?
                 '<div style="width: 24px; height: 3px; background: white; transform: rotate(45deg); border-radius: 2px;"></div>' :
-                `<div style="width: ${isSelected ? '12px' : '10px'}; height: ${isSelected ? '12px' : '10px'}; background: white; border-radius: 50%; box-shadow: 0 0 4px rgba(0,0,0,0.2);"></div>`
+                `<div style="width: ${isSelected ? '12px' : '10px'}; height: ${isSelected ? '12px' : '10px'}; background: white; border-radius: ${onRoute ? '8px' : '50%'}; box-shadow: 0 0 4px rgba(0,0,0,0.2);"></div>`
             }
         </div>
         ${!stop.isDropOffOnly ? `
@@ -210,17 +512,9 @@ function renderMarkers() {
         <div style="min-width: 200px; font-family: ui-sans-serif, system-ui, sans-serif;">
           <strong style="font-size: 14px; display: block; margin-bottom: 4px;">${stop.name}</strong>
           <div style="font-size: 11px; color: #666; margin-bottom: 4px;">
-            ${stop.area === 'east' ? '東口' : '西口'}
+            停留所番号: ${stop.number ?? '-'}
           </div>
-          ${stop.isDropOffOnly ?
-                    '<div style="color: #f97316; font-size: 12px;">降車専用</div>' :
-                    stop.destinations.length > 0 ?
-                        `<div style="font-size: 12px; color: #555;">
-                ${stop.destinations.slice(0, 2).join(' / ')}
-                ${stop.destinations.length > 2 ? ' 他' : ''}
-              </div>` :
-                        ''
-                }
+          <div style="font-size: 11px; color: #6b7280;">国際興業バス</div>
         </div>
       `;
             marker.bindPopup(popupContent);
@@ -241,8 +535,8 @@ function filterStops(query) {
     if (!query) return busStops;
     const q = query.toLowerCase();
     return busStops.filter(stop =>
-        stop.name.includes(q) ||
-        stop.destinations.some(dest => dest.includes(q))
+        stop.name.toLowerCase().includes(q) ||
+        stop.destinations.some(dest => dest.toLowerCase().includes(q))
     );
 }
 
@@ -255,6 +549,7 @@ function handleStopSelect(stop) {
 
     // Update UI
     renderMarkers(); // To update selection pulse
+    loadPatternsForStop(stop);
 
     if (state.isMobile) {
         updateMobileDrawer('peek');
@@ -324,9 +619,9 @@ function renderDesktopSearchResults() {
     resultsContainer.innerHTML = `
     <div class="divide-y divide-gray-100">
       ${filtered.map(stop => {
-        const areaLabel = stop.area === 'east' ? '東口' : '西口';
-        const areaColor = stop.area === 'east' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700';
-        const operatorName = stop.operator === 'tobu' ? '東武' : stop.operator === 'seibu' ? '西武' : '国際興業';
+        const areaLabel = '停留所';
+        const areaColor = 'bg-teal-100 text-teal-700';
+        const operatorName = '国際興業';
 
         return `
           <button
@@ -335,7 +630,7 @@ function renderDesktopSearchResults() {
             ${stop.isDropOffOnly ? 'disabled' : ''}
           >
             <div class="mt-1">
-              <i data-lucide="map-pin" class="w-5 h-5 ${stop.area === 'east' ? 'text-blue-600' : 'text-purple-600'}"></i>
+              <i data-lucide="map-pin" class="w-5 h-5 text-teal-600"></i>
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1">
@@ -376,6 +671,7 @@ function renderDesktopSidePanel() {
     const departureBoard = document.getElementById('desktop-departure-board');
 
     if (!state.selectedStop) {
+        clearRouteLayers();
         defaultMsg.classList.remove('hidden');
         selectedContent.classList.add('hidden');
         return;
@@ -620,8 +916,8 @@ function renderMobileSearchResults() {
         container.innerHTML = `
       <div class="divide-y divide-gray-100">
         ${filtered.map(stop => {
-            const areaLabel = stop.area === 'east' ? '東口' : '西口';
-            const areaColor = stop.area === 'east' ? 'bg-blue-500 text-white' : 'bg-purple-500 text-white';
+            const areaLabel = '停留所';
+            const areaColor = 'bg-teal-500 text-white';
 
             return `
             <button
@@ -667,6 +963,8 @@ function updateMobileDrawer(height) { // height: 'collapsed' | 'peek' | 'half' |
 
     if (state.selectedStop) {
         renderMobileDrawerContent();
+    } else {
+        clearRouteLayers();
     }
 }
 
@@ -693,16 +991,12 @@ function renderMobileDrawerContent() {
 
     title.innerText = stop.name;
 
-    const areaClass = stop.area === 'east'
-        ? 'bg-blue-500 text-white'
-        : stop.area === 'west'
-            ? 'bg-purple-500 text-white'
-            : 'bg-gray-500 text-white';
+    const areaClass = 'bg-teal-500 text-white';
 
     badges.innerHTML = `
-    ${stop.isOmiyaStation ? `<span class="px-3 py-1.5 text-sm rounded-full font-medium ${areaClass}">${stop.area === 'east' ? '東口' : stop.area === 'west' ? '西口' : '駅'}</span>` : ''}
+    ${stop.isOmiyaStation ? `<span class="px-3 py-1.5 text-sm rounded-full font-medium ${areaClass}">停留所</span>` : ''}
     <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full font-medium">
-      ${stop.operator === 'tobu' ? '東武バス' : stop.operator === 'seibu' ? '西武バス' : '国際興業バス'}
+      国際興業バス
     </span>
   `;
 
@@ -808,9 +1102,6 @@ function toggleMobileSearch(show) {
     }
 }
 
-// ==========================================
-// UTIL
-// ==========================================
 function startClock() {
     const update = () => {
         state.currentTime = new Date();
@@ -877,8 +1168,9 @@ function setupEventListeners() {
                 if (state.drawerHeight === 'full') updateMobileDrawer('half');
                 else if (state.drawerHeight === 'half') updateMobileDrawer('peek');
                 else if (state.drawerHeight === 'peek') {
-                    updateMobileDrawer('collapsed');
                     state.selectedStop = null;
+                    updateMobileDrawer('collapsed');
+                    clearRouteLayers();
                 }
             }
         }
@@ -889,14 +1181,47 @@ function setupEventListeners() {
     // Mobile Info Button
     document.getElementById('mobile-info-btn').addEventListener('click', () => {
         state.selectedStop = null;
+        clearRouteLayers();
         renderMobileDrawerContent();
         updateMobileDrawer('half');
     });
 
     // Drawer close btn
     document.getElementById('mobile-drawer-close-btn').addEventListener('click', () => {
-        updateMobileDrawer('collapsed');
         state.selectedStop = null;
+        clearRouteLayers();
+        updateMobileDrawer('collapsed');
         renderMarkers();
+    });
+
+    // Route filter toggle (desktop & mobile)
+    const toggleBtns = [
+        document.getElementById('route-toggle-btn-desktop'),
+        document.getElementById('route-toggle-btn-mobile'),
+    ];
+    toggleBtns.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+            showRouteOnly = !showRouteOnly;
+            updateRouteToggleLabel();
+            renderMarkers();
+        });
+    });
+    updateRouteToggleLabel();
+}
+
+function updateRouteToggleLabel() {
+    const text = showRouteOnly ? 'ルート上のみ' : '全停留所';
+    const btns = [
+        document.getElementById('route-toggle-btn-desktop'),
+        document.getElementById('route-toggle-btn-mobile'),
+    ];
+    btns.forEach(btn => {
+        if (!btn) return;
+        btn.textContent = text;
+        btn.classList.toggle('bg-teal-600', showRouteOnly);
+        btn.classList.toggle('bg-gray-200', !showRouteOnly);
+        btn.classList.toggle('text-white', showRouteOnly);
+        btn.classList.toggle('text-gray-700', !showRouteOnly);
     });
 }
