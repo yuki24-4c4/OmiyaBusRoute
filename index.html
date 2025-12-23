@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Omiya Bus Route Planner</title>
   
   <!-- Styles -->
@@ -30,14 +30,16 @@
     }
   </script>
 </head>
-<body class="bg-gray-50 text-gray-900 overflow-hidden">
+<body class="bg-gray-50 text-gray-900">
 
-  <!-- ========================================== -->
-  <!-- MOBILE VIEW -->
-  <!-- ========================================== -->
-  <div id="mobile-view" class="h-screen flex flex-col relative overflow-hidden bg-gray-50">
-    <!-- Map -->
-    <div class="absolute inset-0 z-0" id="map-mobile"></div>
+  <!-- React mount point -->
+  <div id="root"></div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
 
     <!-- Top Search Bar Container -->
     <div class="absolute top-0 left-0 right-0 z-20 p-3">
@@ -189,7 +191,7 @@
   <!-- ========================================== -->
   <!-- DESKTOP VIEW -->
   <!-- ========================================== -->
-  <div id="desktop-view" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+  <div id="desktop-view" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50" style="display: none;">
     <!-- Header -->
     <header class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
@@ -329,7 +331,6 @@
 
   <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script type="module" src="./data.js"></script>
-  <script type="module" src="./script.js"></script>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

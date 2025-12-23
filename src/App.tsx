@@ -4,6 +4,7 @@ import { RoutePanel } from './components/RoutePanel';
 import { DepartureBoard } from './components/DepartureBoard';
 import { SearchPanel } from './components/SearchPanel';
 import { MobileView } from './components/MobileView';
+import SelectedPlatformBuses from './components/SelectedPlatformBuses';
 import { busStops, routes, getBusStopById } from './data/busData';
 import type { BusStop } from './types';
 
@@ -51,9 +52,13 @@ export default function App() {
     );
   }
 
+  console.log('App.tsx rendering desktop view');
+
   // Desktop view
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <>
+      <SelectedPlatformBuses />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
@@ -160,6 +165,7 @@ export default function App() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
