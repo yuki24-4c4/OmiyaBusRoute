@@ -7,6 +7,7 @@ const busStops = [
     lat: 35.90768,
     lng: 139.62555,
     description: '国際興業バスの主要系統が発着します。',
+    isOmiyaStation: true,
     services: [
       {
         operator: '国際興業バス',

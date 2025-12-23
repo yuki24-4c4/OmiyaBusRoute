@@ -2407,6 +2407,15 @@ body {
   border-left: 3px solid #16a34a;
 }
 
+/* 運行系統の黄色タグスタイル */
+.bg-yellow-400 {
+  background-color: #facc15;
+}
+
+.text-yellow-900 {
+  color: #713f12;
+}
+
 /* モバイル対応 */
 @media (max-width: 640px) {
   [id^="stops-btn-"] {

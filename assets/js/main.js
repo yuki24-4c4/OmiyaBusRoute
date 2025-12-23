@@ -10,11 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
   }).addTo(map);
 
-  // Default to Omiya Station coordinates so routing works immediately
-  let userLocation = [35.9069, 139.6235];
-  let userLocationMarker = null;
-  let routeLayer = null;
-
+  // 大宮駅のマーカー
   const stationMarker = L.circleMarker([35.9069, 139.6235], {
     radius: 10,
     color: '#0d6efd',
@@ -23,17 +19,50 @@ document.addEventListener('DOMContentLoaded', () => {
     fillOpacity: 0.4,
   })
     .addTo(map)
-    .bindTooltip('大宮駅（現在地）', { permanent: true, direction: 'top', offset: [0, -10] });
-
-  // Set station marker as user location marker
-  userLocationMarker = stationMarker;
+    .bindTooltip('大宮駅', { permanent: true, direction: 'top', offset: [0, -10] });
 
   const markerLayer = L.layerGroup().addTo(map);
   const stopMarkers = new Map();
 
+  const filterOmiya = document.getElementById('filter-omiya');
   const filterEast = document.getElementById('filter-east');
   const filterWest = document.getElementById('filter-west');
+  const filterOmiyaMobile = document.getElementById('filter-omiya-mobile');
+  const filterEastMobile = document.getElementById('filter-east-mobile');
+  const filterWestMobile = document.getElementById('filter-west-mobile');
   const stopSelect = document.getElementById('stop-select');
+  
+  // チェックボックスの同期関数（初期化時用）
+  function syncCheckboxes() {
+    // デスクトップとモバイルのチェックボックスを同期
+    // デスクトップの値を優先（存在する場合）
+    if (filterOmiya && filterOmiyaMobile) {
+      filterOmiyaMobile.checked = filterOmiya.checked;
+    } else if (filterOmiyaMobile && !filterOmiya) {
+      // モバイルのみの場合はそのまま
+    }
+    
+    if (filterEast && filterEastMobile) {
+      filterEastMobile.checked = filterEast.checked;
+    } else if (filterEastMobile && !filterEast) {
+      // モバイルのみの場合はそのまま
+    }
+    
+    if (filterWest && filterWestMobile) {
+      filterWestMobile.checked = filterWest.checked;
+    } else if (filterWestMobile && !filterWest) {
+      // モバイルのみの場合はそのまま
+    }
+  }
+  
+  // チェックボックスの値を取得する関数
+  function getFilterValues() {
+    return {
+      omiya: filterOmiya ? filterOmiya.checked : (filterOmiyaMobile ? filterOmiyaMobile.checked : true),
+      east: filterEast ? filterEast.checked : (filterEastMobile ? filterEastMobile.checked : true),
+      west: filterWest ? filterWest.checked : (filterWestMobile ? filterWestMobile.checked : true),
+    };
+  }
   const detailsElement = document.getElementById('stop-details');
   const mobileDetailsElement = document.getElementById('mobile-stop-details');
   const mobileDetailPanel = document.getElementById('mobile-detail-panel');
@@ -108,6 +137,40 @@ document.addEventListener('DOMContentLoaded', () => {
     return best;
   }
 
+  // 次の3つの発車時刻を取得（最大3件）
+  function getNextThreeDepartures(stop) {
+    const now = getNowInTokyo();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+    const departures = [];
+
+    stop.services.forEach((service) => {
+      service.timetable.forEach((timeString) => {
+        const totalMinutes = toMinutes(timeString);
+        let diff = totalMinutes - nowMinutes;
+        let isNextDay = false;
+
+        if (diff < 0) {
+          diff += 24 * 60;
+          isNextDay = true;
+        }
+
+        departures.push({
+          diff,
+          isNextDay: isNextDay || totalMinutes >= 24 * 60,
+          timeString,
+          service,
+        });
+      });
+    });
+
+    // 時間順にソート
+    departures.sort((a, b) => a.diff - b.diff);
+
+    // 最大3件を返す
+    return departures.slice(0, 3);
+  }
+
   function describeDiff(minutes, isNextDay) {
     if (minutes <= 0) {
       return 'まもなく出発';
@@ -134,10 +197,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderStopDetails(stop) {
     const next = getNextDeparture(stop);
+    const nextThree = getNextThreeDepartures(stop);
     const isEast = stop.exit === 'east';
     const areaColorClass = isEast ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700';
     const badgeText = isEast ? '東口' : '西口';
 
+    // 運行系統セクション（画像のように黄色タグで表示）
     const serviceList = stop.services
       .map(
         (service, index) => {
@@ -146,64 +211,61 @@ document.addEventListener('DOMContentLoaded', () => {
           const buttonId = `stops-btn-${stop.id}-${index}`;
           
           return `
-        <div class="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100">
-          <div class="flex items-start justify-between mb-2">
-             <div class="flex-1">
-                <span class="text-xs font-bold text-gray-500 block mb-0.5">${service.operator}</span>
-                <h4 class="font-bold text-gray-900 text-base">${service.line} <span class="mx-1">→</span> ${service.destination}</h4>
-             </div>
-             <div class="text-xs bg-white border border-gray-200 px-2 py-1 rounded text-gray-500 flex-shrink-0 ml-2">経由：${service.via}</div>
+        <div class="bg-white p-4 rounded-xl mb-3 border border-gray-200 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="px-3 py-1 bg-yellow-400 text-yellow-900 text-sm font-bold rounded">${service.line}</span>
+            <span class="text-sm text-gray-600">${service.destination}方面</span>
           </div>
-          <div class="text-sm font-mono text-gray-700 mt-2 bg-white p-2 rounded border border-gray-100 leading-relaxed">
-            ${service.timetable.join('<span class="text-gray-300 mx-2">/</span>')}
-          </div>
-          ${hasIntermediateStops ? `
-          <div class="mt-3 pt-3 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-gray-500">${service.operator}</span>
+            ${hasIntermediateStops ? `
             <button 
               id="${buttonId}"
-              class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-600 transition-all active:scale-95"
+              class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all active:scale-95"
             >
               <i data-lucide="map-pin" class="w-4 h-4"></i>
               <span>途中の停留所</span>
               <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="${buttonId}-icon"></i>
             </button>
-            <div id="${stopsId}" class="hidden mt-3 bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div class="divide-y divide-gray-100">
-                ${service.intermediateStops.map((stopItem, stopIndex) => `
-                  <div class="p-3 flex items-center gap-3 ${stopIndex === 0 ? 'bg-blue-50' : ''} ${stopIndex === service.intermediateStops.length - 1 ? 'bg-green-50' : ''}">
-                    <div class="flex-shrink-0">
-                      ${stopIndex === 0 ? `
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                          <i data-lucide="map-pin" class="w-4 h-4 text-white"></i>
-                        </div>
-                      ` : stopIndex === service.intermediateStops.length - 1 ? `
-                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                          <i data-lucide="flag" class="w-4 h-4 text-white"></i>
-                        </div>
-                      ` : `
-                        <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-                      `}
+            ` : ''}
+          </div>
+          ${hasIntermediateStops ? `
+          <div id="${stopsId}" class="hidden mt-3 bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div class="divide-y divide-gray-100">
+              ${service.intermediateStops.map((stopItem, stopIndex) => `
+                <div class="p-3 flex items-center gap-3 ${stopIndex === 0 ? 'bg-blue-50' : ''} ${stopIndex === service.intermediateStops.length - 1 ? 'bg-green-50' : ''}">
+                  <div class="flex-shrink-0">
+                    ${stopIndex === 0 ? `
+                      <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-white"></i>
+                      </div>
+                    ` : stopIndex === service.intermediateStops.length - 1 ? `
+                      <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                        <i data-lucide="flag" class="w-4 h-4 text-white"></i>
+                      </div>
+                    ` : `
+                      <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                    `}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-gray-900">${stopItem.name}</span>
+                      ${stopIndex === 0 ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-medium">出発</span>' : ''}
+                      ${stopIndex === service.intermediateStops.length - 1 ? '<span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">到着</span>' : ''}
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2">
-                        <span class="text-sm font-medium text-gray-900">${stopItem.name}</span>
-                        ${stopIndex === 0 ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-medium">出発</span>' : ''}
-                        ${stopIndex === service.intermediateStops.length - 1 ? '<span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">到着</span>' : ''}
-                      </div>
-                      <div class="flex items-center gap-3 mt-1">
-                        <span class="text-xs text-gray-500 flex items-center gap-1">
-                          <i data-lucide="clock" class="w-3 h-3"></i>
-                          ${stopItem.time}
-                        </span>
-                        <span class="text-xs text-gray-500 flex items-center gap-1">
-                          <i data-lucide="navigation" class="w-3 h-3"></i>
-                          ${stopItem.distance}
-                        </span>
-                      </div>
+                    <div class="flex items-center gap-3 mt-1">
+                      <span class="text-xs text-gray-500 flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3 h-3"></i>
+                        ${stopItem.time}
+                      </span>
+                      <span class="text-xs text-gray-500 flex items-center gap-1">
+                        <i data-lucide="navigation" class="w-3 h-3"></i>
+                        ${stopItem.distance}
+                      </span>
                     </div>
                   </div>
-                `).join('')}
-              </div>
+                </div>
+              `).join('')}
             </div>
           </div>
           ` : ''}
@@ -222,23 +284,75 @@ document.addEventListener('DOMContentLoaded', () => {
          </div>`
       : '';
 
-    const nextDeparture = next
-      ? `<div class="bg-gradient-to-r ${isEast ? 'from-blue-600 to-blue-500' : 'from-purple-600 to-purple-500'} text-white p-5 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
-           <div class="relative z-10">
-             <div class="text-xs font-medium opacity-90 mb-1">次の出発</div>
-             <div class="flex items-baseline gap-3">
-               <span class="text-3xl font-bold tracking-tight">${describeDiff(next.diff, next.isNextDay)}</span>
-               <span class="text-lg opacity-90 font-medium">(${next.timeString}発)</span>
-             </div>
-             <div class="mt-2 text-sm font-medium opacity-95 flex items-center gap-1">
-               <i data-lucide="bus" class="w-4 h-4"></i>
-               ${next.service.destination} 行き
-             </div>
-           </div>
-           <div class="absolute right-[-10px] bottom-[-10px] opacity-10 rotate-[-15deg]">
-              <i data-lucide="bus" class="w-24 h-24"></i>
-           </div>
-         </div>`
+    // 発車時刻セクション（画像のように表示）
+    const departureTimes = nextThree.length > 0
+      ? `
+        <div class="mb-6">
+          <h3 class="font-bold text-gray-900 mb-4 text-base flex items-center gap-2">
+            <div class="w-1 h-5 bg-gray-900 rounded-full"></div>
+            発車時刻
+          </h3>
+          <div class="space-y-2">
+            ${nextThree.map((dep, idx) => {
+              const isNext = idx === 0;
+              const hasIntermediateStops = dep.service.intermediateStops && dep.service.intermediateStops.length > 0;
+              const timeStopsId = `time-stops-${stop.id}-${idx}`;
+              const timeButtonId = `time-stops-btn-${stop.id}-${idx}`;
+              const diffText = dep.diff <= 0 ? 'まもなく' : `+${dep.diff}分`;
+              
+              return `
+              <div class="p-4 rounded-xl border-2 ${isNext ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white'}">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-3">
+                    ${isNext ? '<span class="text-blue-600 font-bold">((○))</span>' : ''}
+                    <span class="text-lg font-bold text-gray-900">${dep.timeString}</span>
+                    <span class="text-sm font-medium text-gray-700">${dep.service.line}</span>
+                    <span class="text-sm text-gray-600">${dep.service.destination}</span>
+                  </div>
+                  <span class="text-sm font-medium ${isNext ? 'text-blue-600' : 'text-gray-500'}">${diffText}</span>
+                </div>
+                ${hasIntermediateStops ? `
+                <div class="mt-2 pt-2 border-t border-gray-200">
+                  <button 
+                    id="${timeButtonId}"
+                    class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-all active:scale-95"
+                  >
+                    <i data-lucide="map-pin" class="w-3 h-3"></i>
+                    <span>途中の停留所</span>
+                    <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" id="${timeButtonId}-icon"></i>
+                  </button>
+                  <div id="${timeStopsId}" class="hidden mt-2 bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <div class="divide-y divide-gray-100">
+                      ${dep.service.intermediateStops.map((stopItem, stopIndex) => `
+                        <div class="p-2 flex items-center gap-2 text-xs ${stopIndex === 0 ? 'bg-blue-50' : ''} ${stopIndex === dep.service.intermediateStops.length - 1 ? 'bg-green-50' : ''}">
+                          <div class="flex-shrink-0">
+                            ${stopIndex === 0 ? `
+                              <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-white"></i>
+                              </div>
+                            ` : stopIndex === dep.service.intermediateStops.length - 1 ? `
+                              <div class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                                <i data-lucide="flag" class="w-3 h-3 text-white"></i>
+                              </div>
+                            ` : `
+                              <div class="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+                            `}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <span class="text-xs font-medium text-gray-900">${stopItem.name}</span>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+                ` : ''}
+              </div>
+            `;
+            }).join('')}
+          </div>
+        </div>
+      `
       : `<div class="bg-gray-100 text-gray-500 p-6 rounded-2xl text-center mb-6 border border-gray-200">
            <i data-lucide="moon" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
            <p class="font-medium">本日の運行は終了しました</p>
@@ -262,11 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         <p class="text-sm text-gray-600 mb-6 leading-relaxed">${stop.description}</p>
         
-        ${nextDeparture}
+        ${departureTimes}
         
         <h3 class="font-bold text-gray-900 mb-4 text-base flex items-center gap-2">
           <div class="w-1 h-5 bg-gray-900 rounded-full"></div>
-          運行系統・時刻表
+          運行系統
         </h3>
         <div>${serviceList}</div>
         
@@ -286,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (window.lucide) window.lucide.createIcons();
 
-    // 途中停留所ボタンのイベントリスナーを追加
+    // 運行系統の途中停留所ボタンのイベントリスナーを追加
     stop.services.forEach((service, index) => {
       if (service.intermediateStops && service.intermediateStops.length > 0) {
         const buttonId = `stops-btn-${stop.id}-${index}`;
@@ -307,6 +421,33 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
               stopsDiv.classList.add('hidden');
               icon.style.transform = 'rotate(0deg)';
+            }
+          });
+        }
+      }
+    });
+
+    // 時刻表の各バスの途中停留所ボタンのイベントリスナーを追加
+    nextThree.forEach((dep, idx) => {
+      if (dep.service.intermediateStops && dep.service.intermediateStops.length > 0) {
+        const timeButtonId = `time-stops-btn-${stop.id}-${idx}`;
+        const timeStopsId = `time-stops-${stop.id}-${idx}`;
+        const timeIconId = `${timeButtonId}-icon`;
+        
+        const timeButton = document.getElementById(timeButtonId);
+        const timeStopsDiv = document.getElementById(timeStopsId);
+        const timeIcon = document.getElementById(timeIconId);
+        
+        if (timeButton && timeStopsDiv && timeIcon) {
+          timeButton.addEventListener('click', () => {
+            const isHidden = timeStopsDiv.classList.contains('hidden');
+            
+            if (isHidden) {
+              timeStopsDiv.classList.remove('hidden');
+              timeIcon.style.transform = 'rotate(180deg)';
+            } else {
+              timeStopsDiv.classList.add('hidden');
+              timeIcon.style.transform = 'rotate(0deg)';
             }
           });
         }
@@ -354,9 +495,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const stop = window.busStops.find((item) => item.id === stopId);
     if (!stop) return;
 
+    const isOmiya = stop.isOmiyaStation !== undefined ? stop.isOmiyaStation : true;
+    const filters = getFilterValues();
+    const showOmiya = filters.omiya;
+    const showEast = filters.east;
+    const showWest = filters.west;
+    
     const isVisible =
-      (stop.exit === 'east' && filterEast.checked) ||
-      (stop.exit === 'west' && filterWest.checked);
+      (showOmiya && isOmiya) ||
+      (showEast && stop.exit === 'east' && !isOmiya) ||
+      (showWest && stop.exit === 'west' && !isOmiya);
 
     if (!isVisible) {
       return;
@@ -377,7 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderStopDetails(stop);
-    updateRoute();
 
     // モバイル表示の場合は詳細パネルを表示
     if (isMobile && mobileDetailPanel && mobileOverlay) {
@@ -411,11 +558,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateFilters() {
-    const showEast = filterEast.checked;
-    const showWest = filterWest.checked;
+    const filters = getFilterValues();
+    const showOmiya = filters.omiya;
+    const showEast = filters.east;
+    const showWest = filters.west;
 
     window.busStops.forEach((stop) => {
-      const shouldShow = stop.exit === 'east' ? showEast : showWest;
+      // バス停が大宮駅かどうかを判定（デフォルトでtrue、つまりすべてのバス停が大宮駅）
+      const isOmiya = stop.isOmiyaStation !== undefined ? stop.isOmiyaStation : true;
+      
+      // 表示条件を判定
+      let shouldShow = false;
+      
+      // 大宮駅チェックがオンの場合、大宮駅のバス停を表示
+      if (showOmiya && isOmiya) {
+        shouldShow = true;
+      }
+      
+      // 東口チェックがオンの場合、大宮駅以外の東口バス停を表示
+      if (showEast && stop.exit === 'east' && !isOmiya) {
+        shouldShow = true;
+      }
+      
+      // 西口チェックがオンの場合、大宮駅以外の西口バス停を表示
+      if (showWest && stop.exit === 'west' && !isOmiya) {
+        shouldShow = true;
+      }
+      
       const marker = stopMarkers.get(stop.id);
 
       if (marker) {
@@ -431,8 +600,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeStopId) {
       const activeStop = window.busStops.find((stop) => stop.id === activeStopId);
       if (activeStop) {
-        const stillVisible =
-          (activeStop.exit === 'east' && showEast) || (activeStop.exit === 'west' && showWest);
+        const isOmiya = activeStop.isOmiyaStation !== undefined ? activeStop.isOmiyaStation : true;
+        const stillVisible = 
+          (showOmiya && isOmiya) ||
+          (showEast && activeStop.exit === 'east' && !isOmiya) ||
+          (showWest && activeStop.exit === 'west' && !isOmiya);
         if (!stillVisible) {
           clearSelection();
         }
@@ -445,8 +617,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderStopOptions() {
     if (!stopSelect) return;
 
-    const showEast = filterEast.checked;
-    const showWest = filterWest.checked;
+    const filters = getFilterValues();
+    const showOmiya = filters.omiya;
+    const showEast = filters.east;
+    const showWest = filters.west;
     const previousValue = stopSelect.value;
 
     stopSelect.innerHTML = '';
@@ -457,12 +631,19 @@ document.addEventListener('DOMContentLoaded', () => {
     placeholderOption.disabled = true;
     stopSelect.appendChild(placeholderOption);
 
-    const appendGroup = (exit, label) => {
+    const appendGroup = (exit, label, isOmiyaGroup = false) => {
       const group = document.createElement('optgroup');
       group.label = label;
 
       window.busStops
-        .filter((stop) => stop.exit === exit)
+        .filter((stop) => {
+          const isOmiya = stop.isOmiyaStation !== undefined ? stop.isOmiyaStation : true;
+          if (isOmiyaGroup) {
+            return isOmiya;
+          } else {
+            return stop.exit === exit && !isOmiya;
+          }
+        })
         .forEach((stop) => {
           const option = document.createElement('option');
           option.value = stop.id;
@@ -475,6 +656,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
+    if (showOmiya) {
+      appendGroup(null, '大宮駅', true);
+    }
     if (showEast) {
       appendGroup('east', '東口');
     }
@@ -531,10 +715,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  filterEast.addEventListener('change', updateFilters);
-  filterWest.addEventListener('change', updateFilters);
+  // デスクトップ用チェックボックスのイベントリスナー
+  if (filterOmiya) {
+    filterOmiya.addEventListener('change', () => {
+      if (filterOmiyaMobile) filterOmiyaMobile.checked = filterOmiya.checked;
+      updateFilters();
+    });
+  }
+  if (filterEast) {
+    filterEast.addEventListener('change', () => {
+      if (filterEastMobile) filterEastMobile.checked = filterEast.checked;
+      updateFilters();
+    });
+  }
+  if (filterWest) {
+    filterWest.addEventListener('change', () => {
+      if (filterWestMobile) filterWestMobile.checked = filterWest.checked;
+      updateFilters();
+    });
+  }
+  
+  // モバイル用チェックボックスのイベントリスナー
+  if (filterOmiyaMobile) {
+    filterOmiyaMobile.addEventListener('change', () => {
+      if (filterOmiya) filterOmiya.checked = filterOmiyaMobile.checked;
+      updateFilters();
+    });
+  }
+  if (filterEastMobile) {
+    filterEastMobile.addEventListener('change', () => {
+      if (filterEast) filterEast.checked = filterEastMobile.checked;
+      updateFilters();
+    });
+  }
+  if (filterWestMobile) {
+    filterWestMobile.addEventListener('change', () => {
+      if (filterWest) filterWest.checked = filterWestMobile.checked;
+      updateFilters();
+    });
+  }
 
   renderMarkers();
+  
+  // 初期化時にチェックボックスを同期
+  syncCheckboxes();
+  
   updateFilters();
 
   // 初期表示時のバス停選択は、モバイル判定の後に処理する
@@ -561,184 +786,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     observer.observe(mapContainer);
   }
-
-  /* =========================================
-     Geolocation & Routing Logic
-     ========================================= */
-
-  const getLocationBtn = document.getElementById('get-location-btn');
-  const locationStatus = document.getElementById('location-status');
-
-  function updateRoute() {
-    // If no user location or no active stop, remove existing route
-    if (!userLocation || !activeStopId) {
-      if (routeLayer) {
-        map.removeLayer(routeLayer);
-        routeLayer = null;
-      }
-      return;
-    }
-
-    const stop = window.busStops.find((s) => s.id === activeStopId);
-    if (!stop) return;
-
-    // Remove old route layer
-    if (routeLayer) {
-      map.removeLayer(routeLayer);
-    }
-
-    // Get walking route using OpenRouteService API
-    const startLng = userLocation[1];
-    const startLat = userLocation[0];
-    const endLng = stop.lng;
-    const endLat = stop.lat;
-
-    // OpenStreetMap routing service for walking routes
-    // Get multiple alternatives and choose the shortest one
-    const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson&alternatives=true`;
-
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-          // Find the shortest route by distance
-          let shortestRoute = data.routes[0];
-          let shortestDistance = shortestRoute.distance;
-
-          for (let i = 1; i < data.routes.length; i++) {
-            if (data.routes[i].distance < shortestDistance) {
-              shortestRoute = data.routes[i];
-              shortestDistance = data.routes[i].distance;
-            }
-          }
-
-          const coordinates = shortestRoute.geometry.coordinates.map(coord => [coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
-
-          routeLayer = L.polyline(coordinates, {
-            color: '#ef4444',
-            weight: 6,
-            opacity: 0.8,
-            lineCap: 'round',
-            lineJoin: 'round'
-          }).addTo(map);
-
-          // Fit map to route bounds
-          map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
-        } else {
-          console.warn('Route not found, using straight line');
-          // Fallback to straight line if routing fails
-          routeLayer = L.polyline([[startLat, startLng], [endLat, endLng]], {
-            color: '#ef4444',
-            weight: 6,
-            opacity: 0.8,
-            dashArray: '10, 5'
-          }).addTo(map);
-        }
-      })
-      .catch(error => {
-        console.error('Routing error:', error);
-        // Fallback to straight line on error
-        routeLayer = L.polyline([[startLat, startLng], [endLat, endLng]], {
-          color: '#ef4444',
-          weight: 6,
-          opacity: 0.8,
-          dashArray: '10, 5'
-        }).addTo(map);
-      });
-  }
-
-  if (getLocationBtn) {
-    getLocationBtn.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        alert('お使いのブラウザは位置情報をサポートしていません。');
-        return;
-      }
-
-      const statusEl = document.getElementById('location-status');
-      if (statusEl) {
-        statusEl.textContent = '取得中...';
-        statusEl.classList.remove('hidden');
-      }
-
-      getLocationBtn.disabled = true;
-      getLocationBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> 取得中...';
-      lucide.createIcons();
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          userLocation = [latitude, longitude];
-
-          // Update Button
-          getLocationBtn.disabled = false;
-          getLocationBtn.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4"></i> 位置情報を更新';
-          if (statusEl) {
-            statusEl.classList.add('hidden');
-          }
-          lucide.createIcons();
-
-          // Add/Update User Marker
-          if (userLocationMarker) {
-            userLocationMarker.setLatLng(userLocation);
-          } else {
-            userLocationMarker = L.circleMarker(userLocation, {
-              radius: 8,
-              fillColor: '#3b82f6',
-              color: '#fff',
-              weight: 2,
-              opacity: 1,
-              fillOpacity: 1
-            }).addTo(map);
-            userLocationMarker.bindPopup('現在地').openPopup();
-          }
-
-          // Center map
-          map.setView(userLocation, 16);
-
-          // If a stop is already selected, draw route
-          if (activeStopId) {
-            updateRoute();
-          } else {
-            alert('地図上のバス停を選択すると、現在地からのルートが表示されます。');
-          }
-        },
-        (error) => {
-          console.error(error);
-          alert('位置情報の取得に失敗しました。');
-          getLocationBtn.disabled = false;
-          getLocationBtn.innerHTML = '<i data-lucide="navigation" class="w-4 h-4"></i> 現在地からルートを表示';
-          lucide.createIcons();
-          if (statusEl) statusEl.classList.add('hidden');
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        }
-      );
-    });
-  }
-
-  // Hook into existing selectStop to update route when stop changes
-  // We need to monkey-patch or modify the original selectStop?
-  // Since we are inside the same closure, we can just modify the original selectStop function logic?
-  // No, `selectStop` is defined above. We can't modify it easily without rewriting it.
-  // However, `click` events call `selectStop`.
-  // AND `stopSelect` change calls `selectStop`.
-  // I should essentially rewrite `selectStop` or wrap it?
-  // `selectStop` is a local function inside DOMContentLoaded. I cannot overwrite it from "outside" easily, but I am modifying the file in-place.
-
-  // Actually, I can just modify `selectStop` definition in the file to call `updateRoute()` at the end.
-  // But to avoid complex multi-edits, I'll just accept that I need to edit `selectStop` separately or try to catch the event.
-  // Or I can rewrite the `selectStop` function in the previous block if I use `multi_replace`.
-
-  // Let's stick to adding code at the end, but wait... if `selectStop` doesn't call `updateRoute`, the route won't update when I click a NEW stop.
-  // The route only updates when I click the "Location" button.
-  // That's partial functionality.
-
-  // Better approach: Use `multi_replace` to:
-  // 1. Add the variables and helper functions at the top or bottom.
-  // 2. Modify `selectStop` to call `updateRoute()`.
 
   /* =========================================
      GoogleMap風検索機能
