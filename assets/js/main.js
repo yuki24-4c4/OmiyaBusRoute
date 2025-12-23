@@ -35,9 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterWest = document.getElementById('filter-west');
   const stopSelect = document.getElementById('stop-select');
   const detailsElement = document.getElementById('stop-details');
+  const mobileDetailsElement = document.getElementById('mobile-stop-details');
+  const mobileDetailPanel = document.getElementById('mobile-detail-panel');
+  const mobileOverlay = document.getElementById('mobile-overlay');
+  const mobileCloseBtn = document.getElementById('mobile-close-btn');
   const mapContainer = document.querySelector('.map-container');
 
   let activeStopId = null;
+  let isMobile = window.innerWidth < 1024;
 
   if (stopSelect) {
     stopSelect.disabled = true;
@@ -135,20 +140,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const serviceList = stop.services
       .map(
-        (service) => `
+        (service, index) => {
+          const hasIntermediateStops = service.intermediateStops && service.intermediateStops.length > 0;
+          const stopsId = `stops-${stop.id}-${index}`;
+          const buttonId = `stops-btn-${stop.id}-${index}`;
+          
+          return `
         <div class="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100">
           <div class="flex items-start justify-between mb-2">
-             <div>
+             <div class="flex-1">
                 <span class="text-xs font-bold text-gray-500 block mb-0.5">${service.operator}</span>
                 <h4 class="font-bold text-gray-900 text-base">${service.line} <span class="mx-1">→</span> ${service.destination}</h4>
              </div>
-             <div class="text-xs bg-white border border-gray-200 px-2 py-1 rounded text-gray-500">経由：${service.via}</div>
+             <div class="text-xs bg-white border border-gray-200 px-2 py-1 rounded text-gray-500 flex-shrink-0 ml-2">経由：${service.via}</div>
           </div>
           <div class="text-sm font-mono text-gray-700 mt-2 bg-white p-2 rounded border border-gray-100 leading-relaxed">
             ${service.timetable.join('<span class="text-gray-300 mx-2">/</span>')}
           </div>
+          ${hasIntermediateStops ? `
+          <div class="mt-3 pt-3 border-t border-gray-200">
+            <button 
+              id="${buttonId}"
+              class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-600 transition-all active:scale-95"
+            >
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+              <span>途中の停留所</span>
+              <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="${buttonId}-icon"></i>
+            </button>
+            <div id="${stopsId}" class="hidden mt-3 bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div class="divide-y divide-gray-100">
+                ${service.intermediateStops.map((stopItem, stopIndex) => `
+                  <div class="p-3 flex items-center gap-3 ${stopIndex === 0 ? 'bg-blue-50' : ''} ${stopIndex === service.intermediateStops.length - 1 ? 'bg-green-50' : ''}">
+                    <div class="flex-shrink-0">
+                      ${stopIndex === 0 ? `
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          <i data-lucide="map-pin" class="w-4 h-4 text-white"></i>
+                        </div>
+                      ` : stopIndex === service.intermediateStops.length - 1 ? `
+                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                          <i data-lucide="flag" class="w-4 h-4 text-white"></i>
+                        </div>
+                      ` : `
+                        <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                      `}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-900">${stopItem.name}</span>
+                        ${stopIndex === 0 ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-medium">出発</span>' : ''}
+                        ${stopIndex === service.intermediateStops.length - 1 ? '<span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">到着</span>' : ''}
+                      </div>
+                      <div class="flex items-center gap-3 mt-1">
+                        <span class="text-xs text-gray-500 flex items-center gap-1">
+                          <i data-lucide="clock" class="w-3 h-3"></i>
+                          ${stopItem.time}
+                        </span>
+                        <span class="text-xs text-gray-500 flex items-center gap-1">
+                          <i data-lucide="navigation" class="w-3 h-3"></i>
+                          ${stopItem.distance}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          ` : ''}
         </div>
-      `
+      `;
+        }
       )
       .join('');
 
@@ -183,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
            <p class="font-medium">本日の運行は終了しました</p>
          </div>`;
 
-    detailsElement.innerHTML = `
+    const detailContent = `
       <div class="animate-in fade-in duration-300 ease-out">
         <div class="flex justify-between items-start mb-6">
            <div>
@@ -213,12 +274,49 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
+    // デスクトップ用パネルに表示
+    if (detailsElement) {
+      detailsElement.innerHTML = detailContent;
+    }
+
+    // モバイル用パネルに表示
+    if (mobileDetailsElement) {
+      mobileDetailsElement.innerHTML = detailContent;
+    }
+
     if (window.lucide) window.lucide.createIcons();
+
+    // 途中停留所ボタンのイベントリスナーを追加
+    stop.services.forEach((service, index) => {
+      if (service.intermediateStops && service.intermediateStops.length > 0) {
+        const buttonId = `stops-btn-${stop.id}-${index}`;
+        const stopsId = `stops-${stop.id}-${index}`;
+        const iconId = `${buttonId}-icon`;
+        
+        const button = document.getElementById(buttonId);
+        const stopsDiv = document.getElementById(stopsId);
+        const icon = document.getElementById(iconId);
+        
+        if (button && stopsDiv && icon) {
+          button.addEventListener('click', () => {
+            const isHidden = stopsDiv.classList.contains('hidden');
+            
+            if (isHidden) {
+              stopsDiv.classList.remove('hidden');
+              icon.style.transform = 'rotate(180deg)';
+            } else {
+              stopsDiv.classList.add('hidden');
+              icon.style.transform = 'rotate(0deg)';
+            }
+          });
+        }
+      }
+    });
   }
 
   function clearSelection() {
     activeStopId = null;
-    detailsElement.innerHTML = `
+    const emptyContent = `
        <div class="bg-white rounded-xl shadow-lg p-8 text-center h-full flex flex-col justify-center items-center">
           <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
              <i data-lucide="map-pin" class="w-10 h-10 text-gray-300"></i>
@@ -227,6 +325,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <p class="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">地図上のマーカーをクリックするか、一覧から選択すると詳細が表示されます</p>
        </div>
     `;
+    
+    if (detailsElement) {
+      detailsElement.innerHTML = emptyContent;
+    }
+    
+    if (mobileDetailsElement) {
+      mobileDetailsElement.innerHTML = emptyContent;
+    }
+    
     if (window.lucide) window.lucide.createIcons();
 
     if (stopSelect) {
@@ -235,6 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         stopSelect.value = '';
       }
+    }
+
+    // モバイル表示の場合は詳細パネルを閉じる
+    if (isMobile) {
+      closeMobileDetailPanel();
     }
   }
 
@@ -266,6 +378,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderStopDetails(stop);
     updateRoute();
+
+    // モバイル表示の場合は詳細パネルを表示
+    if (isMobile && mobileDetailPanel && mobileOverlay) {
+      showMobileDetailPanel();
+    }
+  }
+
+  // モバイル詳細パネルを展開（280px）
+  function showMobileDetailPanel() {
+    if (mobileDetailPanel && mobileOverlay) {
+      mobileDetailPanel.classList.add('show');
+      mobileOverlay.classList.remove('hidden');
+      mobileOverlay.classList.add('show');
+      // ボディのスクロールを無効化
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  // モバイル詳細パネルを縮小（50px）
+  function closeMobileDetailPanel() {
+    if (mobileDetailPanel && mobileOverlay) {
+      mobileDetailPanel.classList.remove('show');
+      mobileOverlay.classList.remove('show');
+      setTimeout(() => {
+        mobileOverlay.classList.add('hidden');
+      }, 300);
+      // ボディのスクロールを有効化
+      document.body.style.overflow = '';
+      // activeStopIdは保持（50pxの状態でも選択されたバス停の情報は保持）
+    }
   }
 
   function updateFilters() {
@@ -395,9 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderMarkers();
   updateFilters();
 
-  if (window.busStops && window.busStops.length > 0) {
-    selectStop(window.busStops[0].id, { centerOnMap: false });
-  }
+  // 初期表示時のバス停選択は、モバイル判定の後に処理する
+  // （下記のコードで処理）
 
   setInterval(() => {
     if (!activeStopId) return;
@@ -599,5 +740,283 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Add the variables and helper functions at the top or bottom.
   // 2. Modify `selectStop` to call `updateRoute()`.
 
+  /* =========================================
+     GoogleMap風検索機能
+     ========================================= */
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchResultsList = document.getElementById('search-results-list');
+  const searchNoResults = document.getElementById('search-no-results');
+  const searchClearBtn = document.getElementById('search-clear-btn');
+  let searchTimeout = null;
+
+  // 検索関数
+  function searchBusStops(query) {
+    if (!query || query.trim().length === 0) {
+      searchResults.classList.add('hidden');
+      return [];
+    }
+
+    const searchTerm = query.toLowerCase().trim();
+    const results = [];
+
+    window.busStops.forEach((stop) => {
+      let matchScore = 0;
+      let matchType = '';
+
+      // バス停名で検索
+      if (stop.name.toLowerCase().includes(searchTerm)) {
+        matchScore += 100;
+        matchType = 'バス停名';
+      }
+
+      // 行き先で検索
+      stop.services.forEach((service) => {
+        if (service.destination.toLowerCase().includes(searchTerm)) {
+          matchScore += 50;
+          matchType = matchType || '行き先';
+        }
+        // 経由地で検索
+        if (service.via.toLowerCase().includes(searchTerm)) {
+          matchScore += 30;
+          matchType = matchType || '経由地';
+        }
+        // 路線名で検索
+        if (service.line.toLowerCase().includes(searchTerm)) {
+          matchScore += 40;
+          matchType = matchType || '路線名';
+        }
+        // 運営会社で検索
+        if (service.operator.toLowerCase().includes(searchTerm)) {
+          matchScore += 20;
+          matchType = matchType || '運営会社';
+        }
+      });
+
+      // 目印で検索
+      stop.landmarks.forEach((landmark) => {
+        if (landmark.toLowerCase().includes(searchTerm)) {
+          matchScore += 10;
+          matchType = matchType || '目印';
+        }
+      });
+
+      if (matchScore > 0) {
+        results.push({
+          stop,
+          matchScore,
+          matchType,
+        });
+      }
+    });
+
+    // スコアでソート
+    results.sort((a, b) => b.matchScore - a.matchScore);
+
+    return results.slice(0, 10); // 最大10件
+  }
+
+  // 検索結果を表示
+  function displaySearchResults(results) {
+    searchResultsList.innerHTML = '';
+
+    if (results.length === 0) {
+      searchNoResults.classList.remove('hidden');
+      searchResults.classList.remove('hidden');
+      return;
+    }
+
+    searchNoResults.classList.add('hidden');
+
+    results.forEach((result) => {
+      const { stop, matchType } = result;
+      const isEast = stop.exit === 'east';
+      const exitColor = isEast ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700';
+      const exitText = isEast ? '東口' : '西口';
+
+      // 最初のサービス情報を取得
+      const firstService = stop.services[0];
+      const destination = firstService ? firstService.destination : '';
+
+      const resultItem = document.createElement('div');
+      resultItem.className = 'p-3 sm:p-4 hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors';
+      resultItem.innerHTML = `
+        <div class="flex items-start gap-2 sm:gap-3">
+          <div class="flex-shrink-0 mt-0.5 sm:mt-1">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 ${isEast ? 'bg-blue-600' : 'bg-purple-600'} rounded-lg flex items-center justify-center">
+              <i data-lucide="map-pin" class="w-4 h-4 sm:w-5 sm:h-5 text-white"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+              <h4 class="text-sm sm:text-base font-semibold text-gray-900 truncate">${stop.name}</h4>
+              <span class="px-1.5 sm:px-2 py-0.5 ${exitColor} text-xs rounded font-medium flex-shrink-0">${exitText}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-600 mb-1 line-clamp-1">${destination || '詳細情報なし'}</p>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs text-gray-500">${matchType}で一致</span>
+              ${stop.services.length > 1 ? `<span class="text-xs text-gray-400">他${stop.services.length - 1}系統</span>` : ''}
+            </div>
+          </div>
+          <div class="flex-shrink-0 mt-0.5">
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          </div>
+        </div>
+      `;
+
+      resultItem.addEventListener('click', () => {
+        selectStop(stop.id, { centerOnMap: true });
+        searchInput.value = '';
+        searchResults.classList.add('hidden');
+        searchClearBtn.classList.add('hidden');
+        if (window.lucide) window.lucide.createIcons();
+      });
+
+      searchResultsList.appendChild(resultItem);
+    });
+
+    searchResults.classList.remove('hidden');
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  // 検索入力のイベントリスナー
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+
+      // クリアボタンの表示/非表示
+      if (query.length > 0) {
+        searchClearBtn.classList.remove('hidden');
+      } else {
+        searchClearBtn.classList.add('hidden');
+        searchResults.classList.add('hidden');
+      }
+
+      // デバウンス処理
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        if (query.trim().length > 0) {
+          const results = searchBusStops(query);
+          displaySearchResults(results);
+        } else {
+          searchResults.classList.add('hidden');
+        }
+      }, 300);
+    });
+
+    // フォーカス時の処理
+    searchInput.addEventListener('focus', () => {
+      const query = searchInput.value.trim();
+      if (query.length > 0) {
+        const results = searchBusStops(query);
+        displaySearchResults(results);
+      }
+    });
+
+    // 検索バー外をクリックしたら結果を非表示
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && !searchClearBtn.contains(e.target)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+
+    // Enterキーで最初の結果を選択
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+          const results = searchBusStops(query);
+          if (results.length > 0) {
+            selectStop(results[0].stop.id, { centerOnMap: true });
+            searchInput.value = '';
+            searchResults.classList.add('hidden');
+            searchClearBtn.classList.add('hidden');
+          }
+        }
+      } else if (e.key === 'Escape') {
+        searchResults.classList.add('hidden');
+        searchInput.blur();
+      }
+    });
+  }
+
+  // クリアボタンのイベントリスナー
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchResults.classList.add('hidden');
+      searchClearBtn.classList.add('hidden');
+      searchInput.focus();
+    });
+  }
+
+  /* =========================================
+     モバイル詳細パネルのイベントリスナー
+     ========================================= */
+
+  // ×ボタンで50pxに縮小
+  if (mobileCloseBtn) {
+    mobileCloseBtn.addEventListener('click', () => {
+      closeMobileDetailPanel();
+    });
+  }
+
+  // ドラッグハンドルをタップしても展開/縮小できるようにする
+  const dragHandle = mobileDetailPanel?.querySelector('.bg-gray-300');
+  if (dragHandle && mobileDetailPanel) {
+    dragHandle.addEventListener('click', () => {
+      if (mobileDetailPanel.classList.contains('show')) {
+        closeMobileDetailPanel();
+      } else {
+        // バス停が選択されている場合のみ展開
+        if (activeStopId) {
+          showMobileDetailPanel();
+        }
+      }
+    });
+  }
+
+  // オーバーレイをクリックしても50pxに縮小
+  if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', () => {
+      closeMobileDetailPanel();
+    });
+  }
+
+  // ウィンドウサイズ変更時の処理
+  window.addEventListener('resize', () => {
+    const wasMobile = isMobile;
+    isMobile = window.innerWidth < 1024;
+    
+    // モバイルからデスクトップに変更した場合、パネルを閉じる
+    if (wasMobile && !isMobile && mobileDetailPanel) {
+      closeMobileDetailPanel();
+    }
+    
+    map.invalidateSize();
+  });
+
+  // 初期化時にモバイル判定
+  if (isMobile) {
+    // モバイル表示時は最初から詳細パネルを50pxの状態にする
+    if (mobileDetailPanel) {
+      mobileDetailPanel.classList.remove('show');
+      mobileDetailPanel.style.height = '50px';
+    }
+    if (mobileOverlay) {
+      mobileOverlay.classList.add('hidden');
+      mobileOverlay.classList.remove('show');
+    }
+  }
+
+  // 初期表示時にバス停を選択しないようにする（モバイルのみ）
+  if (isMobile && window.busStops && window.busStops.length > 0) {
+    // デスクトップでは最初のバス停を選択するが、モバイルでは選択しない
+    // clearSelection(); // 必要に応じてコメントアウト
+  } else if (!isMobile && window.busStops && window.busStops.length > 0) {
+    // デスクトップ表示時のみ最初のバス停を選択
+    selectStop(window.busStops[0].id, { centerOnMap: false });
+  }
 
 });

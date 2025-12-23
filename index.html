@@ -45,6 +45,38 @@
       </div>
     </header>
 
+    <!-- GoogleMap風検索バー -->
+    <div class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-3 py-2.5 sm:px-4 sm:py-3 lg:px-8">
+        <div class="relative">
+          <div class="relative flex items-center">
+            <i data-lucide="search" class="absolute left-3 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none"></i>
+            <input 
+              type="text" 
+              id="search-input" 
+              placeholder="バス停、行き先、経由地、路線名で検索..."
+              class="w-full pl-10 pr-10 sm:pl-12 sm:pr-12 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm sm:text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              autocomplete="off"
+            />
+            <button 
+              id="search-clear-btn" 
+              class="absolute right-2 sm:right-3 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 active:scale-95 transition-all hidden"
+              aria-label="検索をクリア"
+            >
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <!-- 検索結果ドロップダウン -->
+          <div id="search-results" class="absolute top-full left-0 right-0 mt-1.5 sm:mt-2 bg-white rounded-xl shadow-xl border border-gray-200 max-h-[60vh] sm:max-h-96 overflow-y-auto hidden z-50">
+            <div id="search-results-list" class="divide-y divide-gray-100"></div>
+            <div id="search-no-results" class="p-4 text-center text-gray-500 text-sm hidden">
+              検索結果が見つかりませんでした
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column -->
@@ -125,8 +157,41 @@
           </div>
         </div>
 
-        <!-- Right Column: Info Panel -->
-        <div class="space-y-6" id="desktop-info-panel">
+        <!-- Mobile: Slide-up Detail Panel -->
+        <div id="mobile-detail-panel" class="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-40 transition-all duration-300 ease-out lg:hidden" style="height: 50px;">
+          <div class="sticky top-0 bg-white rounded-t-3xl border-b border-gray-200 z-10">
+            <!-- Drag Handle -->
+            <div class="flex justify-center pt-3 pb-2">
+              <div class="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+            <!-- Close Button -->
+            <div class="absolute top-3 right-4">
+              <button id="mobile-close-btn" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 active:scale-95 transition-all">
+                <i data-lucide="x" class="w-5 h-5 text-gray-600"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Mobile Detail Content -->
+          <div id="mobile-detail-content" class="overflow-y-auto opacity-0 transition-opacity duration-300" style="max-height: calc(280px - 60px); height: calc(280px - 60px);">
+            <article id="mobile-stop-details" class="p-6">
+              <div class="bg-white rounded-xl p-8 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 class="text-gray-900 mb-2 font-medium">バス停を選択してください</h3>
+                <p class="text-sm text-gray-500">地図上のバス停をタップすると、詳細情報が表示されます</p>
+              </div>
+            </article>
+          </div>
+        </div>
+        <!-- Mobile: Overlay (背景を暗くする) -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden lg:hidden transition-opacity duration-300"></div>
+
+        <!-- Right Column: Info Panel (Desktop Only) -->
+        <div class="space-y-6 hidden lg:block" id="desktop-info-panel">
           <!-- Stop Details Target -->
           <article id="stop-details">
             <div class="bg-white rounded-xl shadow-lg p-8 text-center">

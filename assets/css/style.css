@@ -2059,6 +2059,21 @@ html {
   z-index: 10;
 }
 
+/* モバイル表示時はマップのz-indexを下げる */
+@media (max-width: 1023px) {
+  .leaflet-container {
+    z-index: 1;
+  }
+  
+  #map {
+    z-index: 1 !important;
+  }
+  
+  .map-container {
+    z-index: 1;
+  }
+}
+
 .leaflet-popup-content-wrapper {
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -2274,4 +2289,320 @@ body {
 
 .hidden {
   display: none !important;
+}
+
+/* =========================================
+   GoogleMap風検索バー
+   ========================================= */
+
+#search-input {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#search-input:focus {
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+  background-color: white;
+}
+
+#search-results {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+#search-results-list > div:first-child {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+#search-results-list > div:last-child {
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+
+/* 検索結果のアニメーション */
+#search-results {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  #search-input {
+    font-size: 16px; /* iOSでズームを防ぐ */
+  }
+
+  #search-results {
+    max-height: 60vh;
+    border-radius: 0.75rem;
+  }
+
+  /* タッチ操作の改善 */
+  #search-results-list > div {
+    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* スクロールバーのスタイル */
+#search-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+#search-results::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+#search-results::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+#search-results::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* =========================================
+   途中停留所表示
+   ========================================= */
+
+/* 途中停留所リストのアニメーション */
+[id^="stops-"]:not(.hidden) {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* 途中停留所ボタンのホバー効果 */
+[id^="stops-btn-"] {
+  transition: all 0.2s ease;
+}
+
+[id^="stops-btn-"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 途中停留所アイテムのスタイル */
+[id^="stops-"] [class*="divide-y"] > div {
+  transition: background-color 0.2s ease;
+}
+
+[id^="stops-"] [class*="divide-y"] > div:hover {
+  background-color: #f9fafb;
+}
+
+/* 出発・到着バッジのスタイル */
+.bg-blue-50 {
+  border-left: 3px solid #2563eb;
+}
+
+.bg-green-50 {
+  border-left: 3px solid #16a34a;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  [id^="stops-btn-"] {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  [id^="stops-"] [class*="divide-y"] > div {
+    padding: 0.75rem;
+  }
+}
+
+/* =========================================
+   モバイル用GoogleMap風UI
+   ========================================= */
+
+/* モバイル表示時のマップを全画面に */
+@media (max-width: 1023px) {
+  .max-w-7xl {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .px-4, .sm\:px-6, .lg\:px-8 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .py-6 {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  /* マップコンテナを全画面に */
+  .map-container {
+    height: calc(100vh - 120px) !important; /* ヘッダーと検索バーの高さを引く */
+    border-radius: 0;
+  }
+
+  /* ボディのパディングを削除 */
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* デスクトップ用パネルを非表示 */
+  #desktop-info-panel {
+    display: none;
+  }
+
+  #desktop-search-panel {
+    display: none;
+  }
+
+  /* マップのヘッダーを非表示（モバイルでは検索バーがあるため） */
+  div[class*="bg-gradient-to-r"][class*="from-blue-600"] {
+    display: none;
+  }
+
+  /* グリッドレイアウトを解除 */
+  .grid.grid-cols-1.lg\:grid-cols-3 {
+    display: block;
+  }
+
+  .lg\:col-span-2 {
+    width: 100%;
+  }
+}
+
+/* デスクトップ表示時（1024px以上）は元のレイアウトを維持 */
+@media (min-width: 1024px) {
+  /* デスクトップ用パネルを表示 */
+  #desktop-info-panel {
+    display: block !important;
+  }
+
+  #desktop-search-panel {
+    display: block !important;
+  }
+
+  /* マップのヘッダーを表示 */
+  div[class*="bg-gradient-to-r"][class*="from-blue-600"] {
+    display: block !important;
+  }
+
+  /* マップの高さを元に戻す */
+  .map-container {
+    height: 600px !important;
+  }
+
+  /* パディングとマージンを元に戻す */
+  .max-w-7xl {
+    max-width: 80rem;
+  }
+
+  .px-4, .sm\:px-6, .lg\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .py-6 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* モバイル詳細パネルのスタイル */
+#mobile-detail-panel {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  z-index: 50 !important; /* マップより上に表示 */
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 50px !important; /* 初期高さ50px */
+  transition: height 0.3s ease-out !important;
+}
+
+#mobile-detail-panel.show {
+  height: 280px !important; /* 展開時280px */
+}
+
+/* 詳細コンテンツの表示/非表示 */
+#mobile-detail-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
+}
+
+#mobile-detail-panel.show #mobile-detail-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ドラッグハンドル */
+#mobile-detail-panel .bg-gray-300 {
+  cursor: grab;
+}
+
+#mobile-detail-panel .bg-gray-300:active {
+  cursor: grabbing;
+}
+
+/* オーバーレイのアニメーション */
+#mobile-overlay {
+  z-index: 40 !important; /* マップより上、詳細パネルより下 */
+}
+
+#mobile-overlay.show {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+#mobile-overlay.hidden {
+  animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* スライドアップアニメーション */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+#mobile-detail-panel.show {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* スライドダウンアニメーション */
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
 }
