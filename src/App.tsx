@@ -12,6 +12,8 @@ export default function App() {
   const [selectedStop, setSelectedStop] = useState<BusStop | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterOmiya, setFilterOmiya] = useState(true);
+  const [filterOthers, setFilterOthers] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if mobile
@@ -33,10 +35,19 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredStops = busStops.filter(stop =>
-    stop.name.includes(searchQuery) ||
-    stop.destinations.some(dest => dest.includes(searchQuery))
-  );
+  const filteredStops = busStops.filter(stop => {
+    // Category Filter
+    const isOmiya = !!stop.isOmiyaStation; // Ensure boolean
+    const showCategory = (filterOmiya && isOmiya) || (filterOthers && !isOmiya);
+
+    // Search Filter (keep for Mobile compatibility or if search is re-added)
+    const matchesSearch = searchQuery === '' || (
+      stop.name.includes(searchQuery) ||
+      stop.destinations.some(dest => dest.includes(searchQuery))
+    );
+
+    return showCategory && matchesSearch;
+  });
 
   // Mobile view
   if (isMobile) {
@@ -86,8 +97,10 @@ export default function App() {
           {/* Left Column - Map and Search */}
           <div className="lg:col-span-2 space-y-6">
             <SearchPanel
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
+              filterOmiya={filterOmiya}
+              onFilterOmiyaChange={setFilterOmiya}
+              filterOthers={filterOthers}
+              onFilterOthersChange={setFilterOthers}
               filteredStops={filteredStops}
               allStops={busStops}
               onStopSelect={setSelectedStop}
