@@ -36,7 +36,7 @@ export function SearchPanel({
         <div className="mb-6 space-y-3">
           <h3 className="font-bold text-gray-700 text-sm mb-2">表示フィルター</h3>
           <div className="flex gap-4">
-         <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <Checkbox
                 id="filter-omiya"
                 checked={filterOmiya}
@@ -81,21 +81,7 @@ export function SearchPanel({
         </div>
       </CardContent>
 
-      {/* Quick Stats (Optional: keep or remove? User didn't say remove stats. Keeping them for "modern" look) */}
-      <div className="px-4 pb-4 grid grid-cols-3 gap-3">
-        <div className="bg-blue-50 rounded-lg p-3 text-center">
-          <div className="text-2xl text-blue-600 mb-1">{allStops.filter(s => s.isOmiyaStation && s.area === 'east' && !s.isDropOffOnly).length}</div>
-          <div className="text-xs text-blue-700">東口のりば</div>
-        </div>
-        <div className="bg-purple-50 rounded-lg p-3 text-center">
-          <div className="text-2xl text-purple-600 mb-1">{allStops.filter(s => s.isOmiyaStation && s.area === 'west' && !s.isDropOffOnly).length}</div>
-          <div className="text-xs text-purple-700">西口のりば</div>
-        </div>
-        <div className="bg-gray-50 rounded-lg p-3 text-center">
-          <div className="text-2xl text-gray-600 mb-1">{filteredStops.length}</div>
-          <div className="text-xs text-gray-700">表示中</div>
-        </div>
-      </div>
+
     </Card>
   );
 }
