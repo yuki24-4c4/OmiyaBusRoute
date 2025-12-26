@@ -14,11 +14,6 @@ const busStops = [
         destination: 'さいたま新都心駅東口',
         via: 'コクーンシティ',
         timetable: ['07:10', '07:30', '07:50', '08:10', '08:30', '08:50', '09:10', '09:30'],
-        intermediateStops: [
-          { name: '大宮駅東口', time: '0分', distance: '0.0km' },
-          { name: 'コクーンシティ', time: '5分', distance: '1.0km' },
-          { name: 'さいたま新都心駅東口', time: '8分', distance: '1.8km' },
-        ],
       },
       {
         operator: '国際興業バス',
@@ -26,11 +21,6 @@ const busStops = [
         destination: '北浦和駅西口',
         via: '県立近代美術館',
         timetable: ['07:05', '07:35', '08:05', '08:35', '09:05', '09:35'],
-        intermediateStops: [
-          { name: '大宮駅東口', time: '0分', distance: '0.0km' },
-          { name: '県立近代美術館', time: '12分', distance: '2.5km' },
-          { name: '北浦和駅西口', time: '18分', distance: '4.0km' },
-        ],
       },
     ],
     landmarks: ['ルミネ大宮', 'コクーンシティ連絡通路'],
@@ -50,11 +40,6 @@ const busStops = [
         destination: 'さいたま新都心駅西口',
         via: '天沼町',
         timetable: ['07:12', '07:42', '08:12', '08:42', '09:12', '09:42'],
-        intermediateStops: [
-          { name: '大宮駅東口', time: '0分', distance: '0.0km' },
-          { name: '天沼町', time: '6分', distance: '1.2km' },
-          { name: 'さいたま新都心駅西口', time: '10分', distance: '2.0km' },
-        ],
       },
       {
         operator: '東武バスウエスト',
@@ -62,11 +47,6 @@ const busStops = [
         destination: '浦和大学',
         via: '見沼区役所',
         timetable: ['07:20', '08:00', '08:40', '09:20'],
-        intermediateStops: [
-          { name: '大宮駅東口', time: '0分', distance: '0.0km' },
-          { name: '見沼区役所', time: '8分', distance: '1.5km' },
-          { name: '浦和大学', time: '22分', distance: '5.0km' },
-        ],
       },
     ],
     landmarks: ['高島屋', 'JR大宮駅東口駅前広場'],
@@ -86,14 +66,6 @@ const busStops = [
         destination: '大和田駅',
         via: '見沼区役所',
         timetable: ['07:00', '07:30', '08:00', '08:30', '09:00'],
-        intermediateStops: [
-          { name: '大宮駅東口', time: '0分', distance: '0.0km' },
-          { name: '鐘塚公園前', time: '3分', distance: '0.5km' },
-          { name: '見沼区役所', time: '8分', distance: '1.2km' },
-          { name: '見沼代用水', time: '12分', distance: '2.0km' },
-          { name: '大和田駅入口', time: '18分', distance: '3.5km' },
-          { name: '大和田駅', time: '20分', distance: '4.0km' },
-        ],
       },
       {
         operator: '国際興業バス',
@@ -101,13 +73,6 @@ const busStops = [
         destination: '東新井団地',
         via: '大宮区役所',
         timetable: ['07:15', '07:45', '08:15', '08:45', '09:15'],
-        intermediateStops: [
-          { name: '大宮駅東口', time: '0分', distance: '0.0km' },
-          { name: '大宮区役所', time: '5分', distance: '0.8km' },
-          { name: '氷川神社前', time: '8分', distance: '1.3km' },
-          { name: '東新井一丁目', time: '15分', distance: '2.8km' },
-          { name: '東新井団地', time: '20分', distance: '3.5km' },
-        ],
       },
     ],
     landmarks: ['鐘塚公園', 'そごう大宮店連絡口'],
