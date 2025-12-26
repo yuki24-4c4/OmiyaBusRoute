@@ -1,8 +1,6 @@
 import { MapPin, Check } from 'lucide-react';
 import type { BusStop } from '../types';
 import { Card, CardContent } from './ui/card';
-import { Checkbox } from './ui/checkbox';
-import { Label } from './ui/label';
 
 interface SearchPanelProps {
   filterOmiya: boolean;
@@ -35,26 +33,43 @@ export function SearchPanel({
         {/* Filters */}
         <div className="mb-6 space-y-3">
           <h3 className="font-bold text-gray-700 text-sm mb-2">表示フィルター</h3>
-          <div className="flex gap-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="filter-omiya"
-                checked={filterOmiya}
-                onCheckedChange={(checked) => onFilterOmiyaChange(checked as boolean)}
-              />
-              <Label htmlFor="filter-omiya" className="text-sm font-medium cursor-pointer">
-                大宮駅 ({allStops.filter(s => s.isOmiyaStation && !s.isDropOffOnly).length})
-              </Label>
+          <div className="flex gap-3">
+            <div
+              onClick={() => onFilterOmiyaChange(!filterOmiya)}
+              className={`flex-1 flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98] ${filterOmiya
+                ? 'bg-blue-50 border-blue-500'
+                : 'bg-white border-gray-100 hover:border-blue-200'
+                }`}
+            >
+              <div className={`flex-shrink-0 w-5 h-5 rounded flex items-center justify-center border transition-colors ${filterOmiya ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'
+                }`}>
+                {filterOmiya && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-sm font-bold leading-none mb-1 ${filterOmiya ? 'text-blue-700' : 'text-gray-700'}`}>大宮駅</span>
+                <span className="text-xs text-gray-500 leading-none">
+                  {allStops.filter(s => s.isOmiyaStation && !s.isDropOffOnly).length}箇所
+                </span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="filter-others"
-                checked={filterOthers}
-                onCheckedChange={(checked) => onFilterOthersChange(checked as boolean)}
-              />
-              <Label htmlFor="filter-others" className="text-sm font-medium cursor-pointer">
-                それ以外 ({otherCount})
-              </Label>
+
+            <div
+              onClick={() => onFilterOthersChange(!filterOthers)}
+              className={`flex-1 flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98] ${filterOthers
+                ? 'bg-blue-50 border-blue-500'
+                : 'bg-white border-gray-100 hover:border-blue-200'
+                }`}
+            >
+              <div className={`flex-shrink-0 w-5 h-5 rounded flex items-center justify-center border transition-colors ${filterOthers ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'
+                }`}>
+                {filterOthers && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-sm font-bold leading-none mb-1 ${filterOthers ? 'text-blue-700' : 'text-gray-700'}`}>それ以外</span>
+                <span className="text-xs text-gray-500 leading-none">
+                  {otherCount}箇所
+                </span>
+              </div>
             </div>
           </div>
         </div>
