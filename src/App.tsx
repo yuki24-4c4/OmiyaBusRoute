@@ -9,7 +9,9 @@ import { busStops, routes, getBusStopById } from './data/busData';
 import type { BusStop } from './types';
 
 export default function App() {
-  const [selectedStop, setSelectedStop] = useState<BusStop | null>(null);
+  // Default to Omiya East Exit Stop 1 (e1) or find first Omiya stop
+  const defaultStop = busStops.find(s => s.id === 'e1') || null;
+  const [selectedStop, setSelectedStop] = useState<BusStop | null>(defaultStop);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterOmiya, setFilterOmiya] = useState(true);

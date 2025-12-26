@@ -36,7 +36,7 @@ export function SearchPanel({
         <div className="mb-6 space-y-3">
           <h3 className="font-bold text-gray-700 text-sm mb-2">表示フィルター</h3>
           <div className="flex gap-4">
-            <div className="flex items-center space-x-2">
+         <div className="flex items-center space-x-2">
               <Checkbox
                 id="filter-omiya"
                 checked={filterOmiya}
