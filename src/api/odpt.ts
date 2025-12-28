@@ -13,7 +13,8 @@ export async function fetchBusTimetable(options: {
   const params = new URLSearchParams({
     'odpt:operator': operator,
     'acl:consumerKey': consumerKey,
-    "dc:title": "大６１" ,
+    "dc:title": "大６１",
+    "odpt:calendar": "odpt.Calendar:Holiday",
   });
 
   const url = `${base}?${params.toString()}`;
