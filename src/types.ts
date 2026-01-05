@@ -27,4 +27,5 @@ export interface Departure {
   departureTime: string;
   isRealTime: boolean;
   delay?: number;
+  platform?: string;
 }

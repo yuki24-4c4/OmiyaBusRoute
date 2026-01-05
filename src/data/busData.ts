@@ -457,181 +457,181 @@ export const busStops: BusStop[] = [
 ];
 
 export const routes: Route[] = [
-  { 
-    id: 'tobu-e1', 
-    name: '東01系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-e1',
+    name: '東01系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['e1', 'route-e1-dummy1', 'route-e1-dummy2', 'route-e1-1', 'route-e1-dummy3', 'route-e1-2', 'route-e1-dummy4', 'route-e1-3'],
     description: 'さいたま新都心駅・浦和駅・東浦和駅方面'
   },
-  { 
-    id: 'tobu-e2', 
-    name: '東02系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-e2',
+    name: '東02系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['e1', 'route-e2-dummy1', 'route-e2-dummy2', 'route-e2-dummy3'],
     description: '新都心方面'
   },
-  { 
-    id: 'tobu-e3', 
-    name: '東03系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-e3',
+    name: '東03系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['e2', 'route-e3-dummy1', 'route-e3-1', 'route-e3-dummy2', 'route-e3-2'],
     description: '大宮公園・岩槻駅方面'
   },
-  { 
-    id: 'tobu-e4', 
-    name: '東04系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-e4',
+    name: '東04系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['e2', 'route-e4-dummy1', 'route-e4-dummy2', 'route-e4-dummy3', 'route-e4-dummy4'],
-    description: '春岡方面' 
+    description: '春岡方面'
   },
-  { 
-    id: 'tobu-e5', 
-    name: '東05系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-e5',
+    name: '東05系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['e5', 'route-e5-dummy1', 'route-e5-dummy2', 'route-e5-dummy3', 'route-e5-dummy4', 'route-e5-dummy5'],
-    description: '大和田駅・七里駅方面' 
+    description: '大和田駅・七里駅方面'
   },
-  { 
-    id: 'tobu-e6', 
-    name: '東06系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-e6',
+    name: '東06系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['e7', 'route-e6-dummy1', 'route-e6-dummy2', 'route-e6-dummy3', 'route-e6-dummy4'],
-    description: '浦和美園駅・ららぽーと方面' 
+    description: '浦和美園駅・ららぽーと方面'
   },
-  { 
-    id: 'seibu-e1', 
-    name: '上01系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-e1',
+    name: '上01系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['e3', 'route-se1-dummy1', 'route-se1-dummy2', 'route-se1-1', 'route-se1-dummy3', 'route-se1-2'],
     description: '上尾駅・桶川駅方面'
   },
-  { 
-    id: 'seibu-e2', 
-    name: '上02系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-e2',
+    name: '上02系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['e3', 'route-se2-dummy1', 'route-se2-dummy2', 'route-se2-dummy3'],
-    description: 'ニューシャトル方面' 
+    description: 'ニューシャトル方面'
   },
-  { 
-    id: 'seibu-e3', 
-    name: '浦01系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-e3',
+    name: '浦01系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['e6', 'route-se3-dummy1', 'route-se3-dummy2', 'route-se3-dummy3', 'route-se3-dummy4'],
-    description: '北浦和駅・武蔵浦和駅方面' 
+    description: '北浦和駅・武蔵浦和駅方面'
   },
-  { 
-    id: 'kokusai-e1', 
-    name: '川01系統', 
-    operator: 'kokusai', 
-    color: '#E60012', 
+  {
+    id: 'kokusai-e1',
+    name: '川01系統',
+    operator: 'kokusai',
+    color: '#E60012',
     stops: ['e4', 'route-ke1-dummy1', 'route-ke1-dummy2', 'route-ke1-dummy3', 'route-ke1-dummy4', 'route-ke1-dummy5'],
-    description: '川越駅・東松山駅方面' 
+    description: '川越駅・東松山駅方面'
   },
-  { 
-    id: 'kokusai-e2', 
-    name: '栗01系統', 
-    operator: 'kokusai', 
-    color: '#E60012', 
+  {
+    id: 'kokusai-e2',
+    name: '栗01系統',
+    operator: 'kokusai',
+    color: '#E60012',
     stops: ['e8', 'route-ke2-dummy1', 'route-ke2-dummy2', 'route-ke2-dummy3', 'route-ke2-dummy4'],
-    description: '自治医大・栗橋駅方面' 
+    description: '自治医大・栗橋駅方面'
   },
-  { 
-    id: 'tobu-w1', 
-    name: '西01系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-w1',
+    name: '西01系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['w1', 'route-w1-1', 'route-w1-2', 'route-w1-3'],
     description: '指扇駅・西大宮駅・川越駅方面'
   },
-  { 
-    id: 'tobu-w2', 
-    name: '西02系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-w2',
+    name: '西02系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['w4', 'route-w2-dummy1', 'route-w2-dummy2', 'route-w2-dummy3'],
-    description: '宮原駅・加茂宮駅方面' 
+    description: '宮原駅・加茂宮駅方面'
   },
-  { 
-    id: 'tobu-w3', 
-    name: '西03系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-w3',
+    name: '西03系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['w6', 'route-w3-dummy1', 'route-w3-dummy2', 'route-w3-dummy3', 'route-w3-dummy4'],
-    description: '土呂駅・東大宮駅方面' 
+    description: '土呂駅・東大宮駅方面'
   },
-  { 
-    id: 'tobu-w4', 
-    name: '西04系統', 
-    operator: 'tobu', 
-    color: '#00A040', 
+  {
+    id: 'tobu-w4',
+    name: '西04系統',
+    operator: 'tobu',
+    color: '#00A040',
     stops: ['w9', 'route-w4-dummy1', 'route-w4-dummy2', 'route-w4-dummy3'],
-    description: '三橋・佐知川方面' 
+    description: '三橋・佐知川方面'
   },
-  { 
-    id: 'seibu-w1', 
-    name: '所01系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-w1',
+    name: '所01系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['w2', 'route-sw1-dummy1', 'route-sw1-dummy2', 'route-sw1-dummy3', 'route-sw1-dummy4'],
-    description: '所沢駅方面' 
+    description: '所沢駅方面'
   },
-  { 
-    id: 'seibu-w2', 
-    name: '所02系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-w2',
+    name: '所02系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['w2', 'route-sw2-dummy1', 'route-sw2-dummy2', 'route-sw2-dummy3'],
-    description: '新座駅・清瀬駅方面' 
+    description: '新座駅・清瀬駅方面'
   },
-  { 
-    id: 'seibu-w3', 
-    name: '鉄01系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-w3',
+    name: '鉄01系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['w5', 'route-sw3-1', 'route-sw3-2'],
     description: '鉄道博物館・北与野駅方面'
   },
-  { 
-    id: 'seibu-w4', 
-    name: 'ア01系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-w4',
+    name: 'ア01系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['w8', 'route-sw4-dummy1', 'route-sw4-dummy2'],
-    description: 'ソニックシティ・スーパーアリーナ方面' 
+    description: 'ソニックシティ・スーパーアリーナ方面'
   },
-  { 
-    id: 'seibu-w5', 
-    name: '吉01系統', 
-    operator: 'seibu', 
-    color: '#FFD700', 
+  {
+    id: 'seibu-w5',
+    name: '吉01系統',
+    operator: 'seibu',
+    color: '#FFD700',
     stops: ['w11', 'route-sw5-dummy1', 'route-sw5-dummy2', 'route-sw5-dummy3'],
-    description: '吉野原・プラザノース方面' 
+    description: '吉野原・プラザノース方面'
   },
-  { 
-    id: 'kokusai-w1', 
-    name: '丸01系統', 
-    operator: 'kokusai', 
-    color: '#E60012', 
+  {
+    id: 'kokusai-w1',
+    name: '丸01系統',
+    operator: 'kokusai',
+    color: '#E60012',
     stops: ['w3', 'route-kw1-dummy1', 'route-kw1-dummy2', 'route-kw1-dummy3', 'route-kw1-dummy4'],
-    description: '丸山公園・三橋総合公園方面' 
+    description: '丸山公園・三橋総合公園方面'
   },
-  { 
-    id: 'kokusai-w2', 
-    name: '日01系統', 
-    operator: 'kokusai', 
-    color: '#E60012', 
+  {
+    id: 'kokusai-w2',
+    name: '日01系統',
+    operator: 'kokusai',
+    color: '#E60012',
     stops: ['w7', 'route-kw2-dummy1', 'route-kw2-dummy2', 'route-kw2-dummy3'],
-    description: '日進駅・指扇駅方面' 
+    description: '日進駅・指扇駅方面'
   }
 ];
 
@@ -658,13 +658,13 @@ export function getDepartures(stopId: string, currentTime: Date): Departure[] {
     if (!route) return;
 
     const destination = stop.destinations[index] || stop.destinations[0];
-    
+
     // Generate departures every 15-20 minutes
     for (let i = 0; i < 6; i++) {
       const minuteOffset = i * 15 + (index * 5);
       let departureHour = baseHour;
       let departureMinute = baseMinute + minuteOffset;
-      
+
       if (departureMinute >= 60) {
         departureHour += Math.floor(departureMinute / 60);
         departureMinute = departureMinute % 60;
@@ -677,7 +677,8 @@ export function getDepartures(stopId: string, currentTime: Date): Departure[] {
           destination,
           departureTime: `${String(departureHour).padStart(2, '0')}:${String(departureMinute).padStart(2, '0')}`,
           isRealTime: i === 0,
-          delay: i === 0 && Math.random() > 0.7 ? Math.floor(Math.random() * 5) : undefined
+          delay: i === 0 && Math.random() > 0.7 ? Math.floor(Math.random() * 5) : undefined,
+          platform: !stop.isOmiyaStation ? '1番のりば' : undefined
         });
       }
     }

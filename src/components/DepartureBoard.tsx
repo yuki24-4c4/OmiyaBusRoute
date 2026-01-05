@@ -90,6 +90,11 @@ export function DepartureBoard({ stop, currentTime }: DepartureBoardProps) {
                     <span className={`text-4xl font-bold ${index === 0 ? 'text-white' : 'text-gray-900'}`}>
                       {departure.departureTime}
                     </span>
+                    {departure.platform && (
+                      <span className={`text-sm font-bold ml-1 ${index === 0 ? 'text-white' : 'text-gray-500'}`}>
+                        {departure.platform}
+                      </span>
+                    )}
                     {departure.delay && departure.delay > 0 && (
                       <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full ${index === 0 ? 'bg-white/20 backdrop-blur-sm' : 'bg-orange-50'}`}>
                         <TrendingUp className={`w-4 h-4 ${index === 0 ? 'text-white' : 'text-orange-600'}`} />
