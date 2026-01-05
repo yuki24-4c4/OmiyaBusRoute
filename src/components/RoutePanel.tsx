@@ -27,7 +27,7 @@ export function RoutePanel({ stop, onClose }: RoutePanelProps) {
   return (
     <div className="bg-white rounded-2xl overflow-hidden">
       {/* Content */}
-      <div className="">
+      <div className="p-4">
         {stop.isDropOffOnly ? (
           <div className="text-center py-10">
             <div className="w-20 h-20 bg-orange-100 border-2 border-orange-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -54,7 +54,7 @@ export function RoutePanel({ stop, onClose }: RoutePanelProps) {
                     const route = getRouteById(routeId);
                     if (!route) return null;
                     const isExpanded = expandedRoutes.has(routeId);
-                    
+
                     return (
                       <div key={routeId} className="space-y-2">
                         <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
@@ -77,7 +77,7 @@ export function RoutePanel({ stop, onClose }: RoutePanelProps) {
                             途中の停留所
                           </button>
                         </div>
-                        
+
                         {isExpanded && (
                           <div className="ml-3 animate-in slide-in-from-top-2 duration-200">
                             <RouteStopsList

@@ -30,7 +30,7 @@ export function DepartureBoard({ stop, currentTime }: DepartureBoardProps) {
 
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden">
+    <div className="bg-white rounded-2xl overflow-hidden p-4">
       {/* Header */}
       <div className="mb-4">
         <div className="flex items-center gap-2">
@@ -42,7 +42,7 @@ export function DepartureBoard({ stop, currentTime }: DepartureBoardProps) {
       </div>
 
       {/* Next 3 Departures */}
-      <div className="space-y-4">
+      <div className="flex flex-col gap-6">
         {departures.length === 0 ? (
           <div className="p-10 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -61,8 +61,8 @@ export function DepartureBoard({ stop, currentTime }: DepartureBoardProps) {
                 <div
                   onClick={() => toggleExpand(index)}
                   className={`p-5 rounded-2xl shadow-lg cursor-pointer transition-all active:scale-[0.98] ${index === 0
-                      ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
-                      : 'bg-white border border-gray-200 hover:border-blue-300'
+                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
+                    : 'bg-white border border-gray-200 hover:border-blue-300'
                     }`}
                 >
                   <div className="flex items-center justify-between mb-3">
