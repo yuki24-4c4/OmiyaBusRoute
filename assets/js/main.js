@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const filterEast = document.getElementById('filter-east');
   const filterWest = document.getElementById('filter-west');
+  const filterEastMobile = document.getElementById('filter-east-mobile');
+  const filterWestMobile = document.getElementById('filter-west-mobile');
   const stopSelect = document.getElementById('stop-select');
   const detailsElement = document.getElementById('stop-details');
   const mobileDetailsElement = document.getElementById('mobile-stop-details');
@@ -223,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       : '';
 
     const nextDeparture = next
-      ? `<div class="bg-gradient-to-r ${isEast ? 'from-blue-600 to-blue-500' : 'from-purple-600 to-purple-500'} text-white p-5 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
+      ? `<div class="bg-blue-600 text-white p-5 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
            <div class="relative z-10">
              <div class="text-xs font-medium opacity-90 mb-1">次の出発</div>
              <div class="flex items-baseline gap-3">
@@ -411,8 +413,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateFilters() {
-    const showEast = filterEast.checked;
-    const showWest = filterWest.checked;
+    const showEast = (filterEast?.checked ?? filterEastMobile?.checked) ?? true;
+    const showWest = (filterWest?.checked ?? filterWestMobile?.checked) ?? true;
 
     window.busStops.forEach((stop) => {
       const shouldShow = stop.exit === 'east' ? showEast : showWest;
@@ -531,11 +533,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  filterEast.addEventListener('change', updateFilters);
-  filterWest.addEventListener('change', updateFilters);
+  // チェックボックスの同期関数
+  function syncCheckboxes() {
+    if (filterEast && filterEastMobile) {
+      filterEastMobile.checked = filterEast.checked;
+    }
+    if (filterWest && filterWestMobile) {
+      filterWestMobile.checked = filterWest.checked;
+    }
+  }
+
+  // PC用チェックボックスのイベントリスナー
+  if (filterEast) {
+    filterEast.addEventListener('change', () => {
+      updateFilters();
+      syncCheckboxes();
+    });
+  }
+  if (filterWest) {
+    filterWest.addEventListener('change', () => {
+      updateFilters();
+      syncCheckboxes();
+    });
+  }
+
+  // モバイル用チェックボックスのイベントリスナー
+  if (filterEastMobile) {
+    filterEastMobile.addEventListener('change', () => {
+      if (filterEast) {
+        filterEast.checked = filterEastMobile.checked;
+      }
+      updateFilters();
+    });
+  }
+  if (filterWestMobile) {
+    filterWestMobile.addEventListener('change', () => {
+      if (filterWest) {
+        filterWest.checked = filterWestMobile.checked;
+      }
+      updateFilters();
+    });
+  }
 
   renderMarkers();
   updateFilters();
+  syncCheckboxes();
 
   // 初期表示時のバス停選択は、モバイル判定の後に処理する
   // （下記のコードで処理）
