@@ -1,0 +1,23 @@
+# Tasks
+
+- [x] Analyze Reference Design (Copy 2) <!-- id: 0 -->
+    - [x] Inspect file structure of `OmiyaBusRouteのコピー2` <!-- id: 1 -->
+    - [x] Identify key styles/components (App.tsx, index.css) <!-- id: 2 -->
+    - [x] Compare with current `front-pclayout` files <!-- id: 6 -->
+    - [x] Inspect Component implementations (SearchPanel, RoutePanel) <!-- id: 7 -->
+    - [x] Check `main.js` for dynamic content generation <!-- id: 8 -->
+- [x] Update `front-pclayout` <!-- id: 3 -->
+    - [x] Port layout to `index.html` (Search Panel, etc.) <!-- id: 4 -->
+    - [x] Update `main.js` templates and logic <!-- id: 9 -->
+    - [x] Verify changes <!-- id: 5 -->
+- [x] Convert to React/Vite <!-- id: 10 -->
+    - [x] Commit `front-pclayout` as React project <!-- id: 11 -->
+- [x] Implement New Filters <!-- id: 12 -->
+    - [x] Analyze `busData.ts` for filtering logic <!-- id: 13 -->
+    - [x] Modify `SearchPanel.tsx`: Remove text search, add "Omiya"/"Other" checkboxes <!-- id: 14 -->
+    - [x] Verify functionality <!-- id: 15 -->
+- [x] Refine UI <!-- id: 16 -->
+    - [x] Fix filter checkbox visibility <!-- id: 17 -->
+    - [x] Update DepartureBoard (Top 3, Interactive Cards) <!-- id: 18 -->
+    - [x] Remove statistics counters <!-- id: 19 -->
+    - [x] Refine Filter UI (Card Style) <!-- id: 20 -->
