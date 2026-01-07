@@ -129,13 +129,7 @@ export function DepartureBoard({ stop, currentTime }: DepartureBoardProps) {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
-        <div className="flex items-center gap-2 text-sm text-blue-700">
-          <Radio className="w-4 h-4" />
-          <span className="font-medium">リアルタイム情報は参考値です</span>
-        </div>
-      </div>
+
     </div>
   );
 }
