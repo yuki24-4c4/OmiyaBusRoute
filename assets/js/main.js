@@ -33,8 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const filterEast = document.getElementById('filter-east');
   const filterWest = document.getElementById('filter-west');
+  const filterOmiya = document.getElementById('filter-omiya');
   const filterEastMobile = document.getElementById('filter-east-mobile');
   const filterWestMobile = document.getElementById('filter-west-mobile');
+  const filterOmiyaMobile = document.getElementById('filter-omiya-mobile');
   const stopSelect = document.getElementById('stop-select');
   const detailsElement = document.getElementById('stop-details');
   const mobileDetailsElement = document.getElementById('mobile-stop-details');
@@ -48,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (stopSelect) {
     stopSelect.disabled = true;
+  }
+
+  // 大宮駅のバス停かどうかを判定する関数
+  function isOmiyaStationStop(stop) {
+    return stop.name.startsWith('東口') || stop.name.startsWith('西口');
   }
 
   function createMarker(stop) {
@@ -141,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const badgeText = isEast ? '東口' : '西口';
 
     const serviceList = stop.services
+      .slice(0, 3)
       .map(
         (service, index) => {
           const hasIntermediateStops = service.intermediateStops && service.intermediateStops.length > 0;
@@ -356,9 +364,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const stop = window.busStops.find((item) => item.id === stopId);
     if (!stop) return;
 
-    const isVisible =
-      (stop.exit === 'east' && filterEast.checked) ||
-      (stop.exit === 'west' && filterWest.checked);
+    const showEast = (filterEast?.checked ?? filterEastMobile?.checked) ?? true;
+    const showWest = (filterWest?.checked ?? filterWestMobile?.checked) ?? true;
+    const showOmiya = (filterOmiya?.checked ?? filterOmiyaMobile?.checked) ?? true;
+    const isOmiyaStop = isOmiyaStationStop(stop);
+
+    let isVisible = false;
+    if (showOmiya && isOmiyaStop) {
+      isVisible = true;
+    } else if (!isOmiyaStop) {
+      isVisible =
+        (stop.exit === 'east' && showEast) ||
+        (stop.exit === 'west' && showWest);
+    }
 
     if (!isVisible) {
       return;
@@ -415,9 +433,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateFilters() {
     const showEast = (filterEast?.checked ?? filterEastMobile?.checked) ?? true;
     const showWest = (filterWest?.checked ?? filterWestMobile?.checked) ?? true;
+    const showOmiya = (filterOmiya?.checked ?? filterOmiyaMobile?.checked) ?? true;
 
     window.busStops.forEach((stop) => {
-      const shouldShow = stop.exit === 'east' ? showEast : showWest;
+      const isOmiyaStop = isOmiyaStationStop(stop);
+      let shouldShow = false;
+
+      if (showOmiya && isOmiyaStop) {
+        // 大宮駅がチェックされている場合、大宮駅のバス停をすべて表示
+        shouldShow = true;
+      } else if (!isOmiyaStop) {
+        // 大宮駅以外のバス停は、東口・西口のチェック状態に従う
+        if (stop.exit === 'east' && showEast) {
+          shouldShow = true;
+        } else if (stop.exit === 'west' && showWest) {
+          shouldShow = true;
+        }
+      }
+
       const marker = stopMarkers.get(stop.id);
 
       if (marker) {
@@ -433,8 +466,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeStopId) {
       const activeStop = window.busStops.find((stop) => stop.id === activeStopId);
       if (activeStop) {
-        const stillVisible =
-          (activeStop.exit === 'east' && showEast) || (activeStop.exit === 'west' && showWest);
+        const isOmiyaStop = isOmiyaStationStop(activeStop);
+        let stillVisible = false;
+
+        if (showOmiya && isOmiyaStop) {
+          stillVisible = true;
+        } else if (!isOmiyaStop) {
+          stillVisible =
+            (activeStop.exit === 'east' && showEast) || (activeStop.exit === 'west' && showWest);
+        }
+
         if (!stillVisible) {
           clearSelection();
         }
@@ -447,8 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderStopOptions() {
     if (!stopSelect) return;
 
-    const showEast = filterEast.checked;
-    const showWest = filterWest.checked;
+    const showEast = (filterEast?.checked ?? filterEastMobile?.checked) ?? true;
+    const showWest = (filterWest?.checked ?? filterWestMobile?.checked) ?? true;
+    const showOmiya = (filterOmiya?.checked ?? filterOmiyaMobile?.checked) ?? true;
     const previousValue = stopSelect.value;
 
     stopSelect.innerHTML = '';
@@ -464,12 +506,39 @@ document.addEventListener('DOMContentLoaded', () => {
       group.label = label;
 
       window.busStops
-        .filter((stop) => stop.exit === exit)
+        .filter((stop) => {
+          if (stop.exit !== exit) return false;
+          const isOmiyaStop = isOmiyaStationStop(stop);
+          
+          // 大宮駅がチェックされている場合、すべてのバス停を含める
+          if (showOmiya && isOmiyaStop) {
+            return true;
+          }
+          // 大宮駅以外のバス停は、東口・西口のチェック状態に従う
+          if (!isOmiyaStop) {
+            return true;
+          }
+          return false;
+        })
         .forEach((stop) => {
-          const option = document.createElement('option');
-          option.value = stop.id;
-          option.textContent = stop.name;
-          group.appendChild(option);
+          const isOmiyaStop = isOmiyaStationStop(stop);
+          let shouldInclude = false;
+
+          // 大宮駅がチェックされている場合、大宮駅のバス停を含める
+          if (showOmiya && isOmiyaStop) {
+            shouldInclude = true;
+          }
+          // 大宮駅以外のバス停は、東口・西口のチェック状態に従う
+          else if (!isOmiyaStop) {
+            shouldInclude = true;
+          }
+
+          if (shouldInclude) {
+            const option = document.createElement('option');
+            option.value = stop.id;
+            option.textContent = stop.name;
+            group.appendChild(option);
+          }
         });
 
       if (group.children.length > 0) {
@@ -477,10 +546,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    if (showEast) {
+    if (showEast || showOmiya) {
       appendGroup('east', '東口');
     }
-    if (showWest) {
+    if (showWest || showOmiya) {
       appendGroup('west', '西口');
     }
 
@@ -541,6 +610,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filterWest && filterWestMobile) {
       filterWestMobile.checked = filterWest.checked;
     }
+    if (filterOmiya && filterOmiyaMobile) {
+      filterOmiyaMobile.checked = filterOmiya.checked;
+    }
   }
 
   // PC用チェックボックスのイベントリスナー
@@ -552,6 +624,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (filterWest) {
     filterWest.addEventListener('change', () => {
+      updateFilters();
+      syncCheckboxes();
+    });
+  }
+  if (filterOmiya) {
+    filterOmiya.addEventListener('change', () => {
       updateFilters();
       syncCheckboxes();
     });
@@ -570,6 +648,14 @@ document.addEventListener('DOMContentLoaded', () => {
     filterWestMobile.addEventListener('change', () => {
       if (filterWest) {
         filterWest.checked = filterWestMobile.checked;
+      }
+      updateFilters();
+    });
+  }
+  if (filterOmiyaMobile) {
+    filterOmiyaMobile.addEventListener('change', () => {
+      if (filterOmiya) {
+        filterOmiya.checked = filterOmiyaMobile.checked;
       }
       updateFilters();
     });
@@ -612,81 +698,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const locationStatus = document.getElementById('location-status');
 
   function updateRoute() {
-    // If no user location or no active stop, remove existing route
-    if (!userLocation || !activeStopId) {
-      if (routeLayer) {
-        map.removeLayer(routeLayer);
-        routeLayer = null;
-      }
-      return;
-    }
-
-    const stop = window.busStops.find((s) => s.id === activeStopId);
-    if (!stop) return;
-
-    // Remove old route layer
+    // ルート表示を無効化 - 既存のルートレイヤーがあれば削除
     if (routeLayer) {
       map.removeLayer(routeLayer);
+      routeLayer = null;
     }
-
-    // Get walking route using OpenRouteService API
-    const startLng = userLocation[1];
-    const startLat = userLocation[0];
-    const endLng = stop.lng;
-    const endLat = stop.lat;
-
-    // OpenStreetMap routing service for walking routes
-    // Get multiple alternatives and choose the shortest one
-    const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson&alternatives=true`;
-
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-          // Find the shortest route by distance
-          let shortestRoute = data.routes[0];
-          let shortestDistance = shortestRoute.distance;
-
-          for (let i = 1; i < data.routes.length; i++) {
-            if (data.routes[i].distance < shortestDistance) {
-              shortestRoute = data.routes[i];
-              shortestDistance = data.routes[i].distance;
-            }
-          }
-
-          const coordinates = shortestRoute.geometry.coordinates.map(coord => [coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
-
-          routeLayer = L.polyline(coordinates, {
-            color: '#ef4444',
-            weight: 6,
-            opacity: 0.8,
-            lineCap: 'round',
-            lineJoin: 'round'
-          }).addTo(map);
-
-          // Fit map to route bounds
-          map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
-        } else {
-          console.warn('Route not found, using straight line');
-          // Fallback to straight line if routing fails
-          routeLayer = L.polyline([[startLat, startLng], [endLat, endLng]], {
-            color: '#ef4444',
-            weight: 6,
-            opacity: 0.8,
-            dashArray: '10, 5'
-          }).addTo(map);
-        }
-      })
-      .catch(error => {
-        console.error('Routing error:', error);
-        // Fallback to straight line on error
-        routeLayer = L.polyline([[startLat, startLng], [endLat, endLng]], {
-          color: '#ef4444',
-          weight: 6,
-          opacity: 0.8,
-          dashArray: '10, 5'
-        }).addTo(map);
-      });
   }
 
   if (getLocationBtn) {
@@ -802,8 +818,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const searchTerm = query.toLowerCase().trim();
     const results = [];
+    const showEast = (filterEast?.checked ?? filterEastMobile?.checked) ?? true;
+    const showWest = (filterWest?.checked ?? filterWestMobile?.checked) ?? true;
+    const showOmiya = (filterOmiya?.checked ?? filterOmiyaMobile?.checked) ?? true;
 
     window.busStops.forEach((stop) => {
+      // フィルタリング条件をチェック
+      const isOmiyaStop = isOmiyaStationStop(stop);
+      let shouldInclude = false;
+
+      if (showOmiya && isOmiyaStop) {
+        shouldInclude = true;
+      } else if (!isOmiyaStop) {
+        if (stop.exit === 'east' && showEast) {
+          shouldInclude = true;
+        } else if (stop.exit === 'west' && showWest) {
+          shouldInclude = true;
+        }
+      }
+
+      if (!shouldInclude) {
+        return;
+      }
+
       let matchScore = 0;
       let matchType = '';
 
