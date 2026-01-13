@@ -1,8 +1,10 @@
 export async function fetchBusTimetable(options: {
-  operator?: string;
   consumerKey: string;
+  operator?: string;
+  title?: string;
 }): Promise<any> {
-  const operator = options.operator ?? 'odpt.Operator:TobuBus';
+  const operator = options.operator ?? 'odpt.Operator:KokusaiKogyoBus';
+  const title = options.title ??  "大１２";
   const consumerKey = options.consumerKey;
 
   if (!consumerKey) {
@@ -13,7 +15,7 @@ export async function fetchBusTimetable(options: {
   const params = new URLSearchParams({
     'odpt:operator': operator,
     'acl:consumerKey': consumerKey,
-    "dc:title": "大６１",
+    "dc:title": "大12",
     "odpt:calendar": "odpt.Calendar:Holiday",
   });
 
