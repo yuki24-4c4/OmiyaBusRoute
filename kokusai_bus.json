@@ -14,13 +14,6 @@
     "lon": 139.6556
   },
   {
-    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.11",
-    "title": "大宮駅東口",
-    "number": "11",
-    "lat": 35.9069,
-    "lon": 139.6275
-  },
-  {
     "id": "odpt.BusstopPole:KokusaiKogyoBus.SaGiSanKinenKouen.2027.1",
     "title": "さぎ山記念公園",
     "number": "1",
@@ -686,13 +679,6 @@
     "lon": 139.6503
   },
   {
-    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.7",
-    "title": "大宮駅東口",
-    "number": "7",
-    "lat": 35.9066,
-    "lon": 139.6259
-  },
-  {
     "id": "odpt.BusstopPole:KokusaiKogyoBus.Yahata.2038.1",
     "title": "八幡",
     "number": "1",
@@ -740,13 +726,6 @@
     "number": "1",
     "lat": 35.91143,
     "lon": 139.6454
-  },
-  {
-    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.6",
-    "title": "大宮駅東口",
-    "number": "6",
-    "lat": 35.90655,
-    "lon": 139.6257
   },
   {
     "id": "odpt.BusstopPole:KokusaiKogyoBus.HoriNoUchi.2120.4",
@@ -1001,13 +980,6 @@
     "lon": 139.6795
   },
   {
-    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.9",
-    "title": "大宮駅東口",
-    "number": "9",
-    "lat": 35.90675,
-    "lon": 139.6265
-  },
-  {
     "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaOokadoMachi.2002.1",
     "title": "大宮大門町",
     "number": "1",
@@ -1027,13 +999,6 @@
     "number": "1",
     "lat": 35.90928,
     "lon": 139.6341
-  },
-  {
-    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.99",
-    "title": "大宮駅東口",
-    "number": "99",
-    "lat": 35.90647,
-    "lon": 139.6259
   },
   {
     "id": "odpt.BusstopPole:KokusaiKogyoBus.OguraShiraoka.2054.1",
@@ -1139,13 +1104,6 @@
     "number": "99",
     "lat": 35.90528,
     "lon": 139.6605
-  },
-  {
-    "id": "odpt.BusstopPole:KokusaiKogyoBus.OomiyaEkiHigashiguchi.2001.4",
-    "title": "大宮駅東口",
-    "number": "4",
-    "lat": 35.9063,
-    "lon": 139.6252
   },
   {
     "id": "odpt.BusstopPole:KokusaiKogyoBus.Ooya.2057.1",

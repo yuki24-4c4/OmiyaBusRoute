@@ -183,24 +183,35 @@ export function BusStopMap({ stops, selectedStop, onStopSelect }: BusStopMapProp
           title: stop.name,
         });
 
+        const stopAreaLabel =
+          stop.area === 'east' ? '\u6771\u53e3' :
+          stop.area === 'west' ? '\u897f\u53e3' :
+          '\u505c\u7559\u6240';
+        const omiyaSideLabel = stop.area === 'east' ? '\u6771\u53e3' : '\u897f\u53e3';
+        const omiyaId = stop.isOmiyaStation
+          ? (stop.id.split('-').pop() ?? stop.id)
+          : stop.id;
+        const popupTitle = stop.isOmiyaStation ? `\u5927\u5bae\u99c5 ${omiyaSideLabel}` : stop.name;
+        const popupAreaLine = stop.isOmiyaStation
+          ? `<div style="font-size: 11px; color: #666; margin-bottom: 4px;">ID\u756a\u53f7: ${omiyaId}</div>`
+          : `<div style="font-size: 11px; color: #666; margin-bottom: 4px;">${stopAreaLabel}</div>`;
+
         // Add popup
         const popupContent = `
           <div style="min-width: 200px;">
-            <strong style="font-size: 14px; display: block; margin-bottom: 4px;">${stop.name}</strong>
-            <div style="font-size: 11px; color: #666; margin-bottom: 4px;">
-              ${stop.area === 'east' ? '東口' : '西口'}
-            </div>
+            <strong style="font-size: 14px; display: block; margin-bottom: 4px;">${popupTitle}</strong>
+            ${popupAreaLine}
             ${stop.isDropOffOnly ? 
-              '<div style="color: #f97316; font-size: 12px;">降車専用</div>' :
+              '<div style="color: #f97316; font-size: 12px;">\u964d\u8eca\u5c02\u7528</div>' :
               stop.destinations.length > 0 ?
                 `<div style="font-size: 12px; color: #555;">
                   ${stop.destinations.slice(0, 2).join(' / ')}
-                  ${stop.destinations.length > 2 ? ' 他' : ''}
+                  ${stop.destinations.length > 2 ? ' \u4ed6' : ''}
                 </div>` :
                 ''
             }
             ${!stop.isDropOffOnly ? 
-              '<div style="margin-top: 8px; font-size: 11px; color: #2563eb;">クリックして詳細を表示</div>' :
+              '<div style="margin-top: 8px; font-size: 11px; color: #2563eb;">\u30af\u30ea\u30c3\u30af\u3057\u3066\u8a73\u7d30\u3092\u8868\u793a</div>' :
               ''
             }
           </div>
