@@ -12,8 +12,7 @@ type Props = {
 export default function SelectedPlatformBuses({
 	consumerKey,
 	titles,
-	title = '大６１',
-	operator = 'odpt.Operator:TobuBus',
+	operator = 'odpt.Operator:KokusaiKogyoBus',
 	onDepartures,
 }: Props) {
 	const envKey = (import.meta.env && (import.meta.env as any).VITE_ODPT_KEY) || '';
@@ -48,33 +47,37 @@ export default function SelectedPlatformBuses({
 			if (isMidnight) d.setDate(d.getDate() + 1);
 			return d;
 		};
-		
-		const now = new Date();
-		const allUpcoming: any[] = [];
 
-		// Fetch data for all titles
+		const now = new Date();
+
+		// Fetch for each title
 		Promise.all(
 			titlesToFetch.map(titleToFetch =>
-				fetchBusTimetable({ consumerKey: key, operator, title: titleToFetch })
-					.then(data => {
-						console.log(`✓ API response for "${titleToFetch}":`, data);
-						return data;
+				fetchBusTimetable({ consumerKey: key, title: titleToFetch, operator })
+					.then((d) => {
+						console.log(`✓ API response for "${titleToFetch}":`, d);
+						const arr = Array.isArray(d) ? d : d ? [d] : [];
+						console.log(`  Array length: ${arr.length}`);
+						if (arr.length > 0) {
+							console.log(`  First item:`, arr[0]);
+						}
+						return arr;
 					})
-					.catch(err => {
-						console.error(`✗ Error fetching timetable for ${titleToFetch}:`, err);
+					.catch((err) => {
+						console.error(`✗ Error fetching for "${titleToFetch}":`, err);
 						return [];
 					})
 			)
 		)
 			.then((results) => {
-				console.log('📋 All API Results:', results);
+				console.log('📋 All Results:', results);
 				
+				const allUpcoming: any[] = [];
+
 				// Process each title's results
-				results.forEach((d, titleIndex) => {
-					const arr = Array.isArray(d) ? d : d ? [d] : [];
+				results.forEach((arr, titleIndex) => {
 					const fetchedTitle = titlesToFetch[titleIndex];
-					
-					console.log(`Processing "${fetchedTitle}": received ${arr.length} timetable(s)`);
+					console.log(`\nProcessing "${fetchedTitle}": received ${arr.length} timetable(s)`);
 
 					arr.forEach((timetable: any) => {
 						const objects = timetable['odpt:busTimetableObject'] || [];
@@ -90,7 +93,7 @@ export default function SelectedPlatformBuses({
 						const isMidnight = obj['odpt:isMidnight'];
 						const depDate = parseToDate(departureTime, isMidnight);
 
-						console.log(`    - objects[0] departureTime: ${departureTime}, depDate: ${depDate.toLocaleTimeString('ja-JP')}, isUpcoming: ${depDate >= now}`);
+						console.log(`    - departureTime: ${departureTime}, isUpcoming: ${depDate >= now}`);
 
 						if (depDate >= now) {
 							allUpcoming.push({
@@ -102,20 +105,22 @@ export default function SelectedPlatformBuses({
 					});
 				});
 
-				console.log(`🕐 Current time: ${now.toLocaleTimeString('ja-JP')}`);
+				console.log(`\n🕐 Current time: ${now.toLocaleTimeString('ja-JP')}`);
 				console.log(`📊 Searched titles: ${titlesToFetch.length}`);
 				console.log(`✓ Upcoming departures (>= now): ${allUpcoming.length}`);
 
-				// Show only the first 3
-				const displayItems = allUpcoming.slice(0, 3);
+				// Sort by departure time (closest to now first) and take top 3
+				const sortedItems = allUpcoming.sort((a, b) => {
+					const depDateA = parseToDate(a.departureTime);
+					const depDateB = parseToDate(b.departureTime);
+					return depDateA.getTime() - depDateB.getTime();
+				});
+				const displayItems = sortedItems.slice(0, 3);
 
 				if (displayItems.length > 0) {
-					// Display full timetable objects
 					displayItems.forEach((item: any) => {
-						console.log(`\n📍 ${item.tableTitle}`);
-						console.log('Timetable:', item.timetable);
+						console.log(`\n📍 ${item.tableTitle} - ${item.departureTime}`);
 					});
-					// Pass data to parent component via callback
 					if (onDepartures) {
 						onDepartures(displayItems);
 					}

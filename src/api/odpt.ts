@@ -4,7 +4,7 @@ export async function fetchBusTimetable(options: {
   title?: string;
 }): Promise<any> {
   const operator = options.operator ?? 'odpt.Operator:KokusaiKogyoBus';
-  const title = options.title ?? "大１２";
+  const title = options.title ?? "大12";
   const consumerKey = options.consumerKey;
 
   if (!consumerKey) {
@@ -15,7 +15,7 @@ export async function fetchBusTimetable(options: {
   const params = new URLSearchParams({
     'odpt:operator': operator,
     'acl:consumerKey': consumerKey,
-    "dc:title": "大12",
+    "dc:title": title,
     "odpt:calendar": "odpt.Calendar:Holiday",
   });
 
@@ -26,6 +26,7 @@ export async function fetchBusTimetable(options: {
     const text = await res.text();
     throw new Error(`ODPT API error ${res.status}: ${text}`);
   }
+  console.log("title: ", title);
   console.log("params: ", params);
   console.log("res: ", res);
   
