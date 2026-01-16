@@ -6,6 +6,7 @@ import { SearchPanel } from "./components/SearchPanel";
 import { MobileView } from "./components/MobileView";
 import { Card, CardContent } from "./components/ui/card";
 import SelectedPlatformBuses from "./components/SelectedPlatformBuses";
+import BusroutePattern from "./components/BusroutePattern";
 import { busStops, routes, getBusStopById } from "./data/busData";
 import type { BusStop, OmiyaStationData } from "./types";
 import omiyaStationData from "./../omiya_station.json";
@@ -144,7 +145,10 @@ export default function App() {
   return (
     <>
       {selectedStop?.isOmiyaStation && selectedTitles && selectedTitles.length > 0 && (
-        <SelectedPlatformBuses titles={selectedTitles} />
+        <>
+          <SelectedPlatformBuses titles={selectedTitles} />
+          <BusroutePattern titles={selectedTitles} />
+        </>
       )}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
         {/* Header */}
