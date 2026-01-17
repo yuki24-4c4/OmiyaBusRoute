@@ -6,8 +6,46 @@ import { SearchPanel } from "./components/SearchPanel";
 import { MobileView } from "./components/MobileView";
 import { Card, CardContent } from "./components/ui/card";
 import SelectedPlatformBuses from "./components/SelectedPlatformBuses";
+import BusroutePattern from "./components/BusroutePattern";
 import { busStops, routes, getBusStopById } from "./data/busData";
-import type { BusStop } from "./types";
+import type { BusStop, OmiyaStationData } from "./types";
+import omiyaStationData from "./../omiya_station.json";
+
+// Helper function to get titles for Omiya station stop
+function getTitlesForOmiyaStop(stop: BusStop): string[] {
+  console.log("getTitlesForOmiyaStop called with:", stop.id);
+  
+  const data = omiyaStationData as OmiyaStationData;
+  console.log("omiyaStationData loaded:", data);
+  
+  // Determine if this is West or East exit based on stop.id
+  // stop.id format: "omiya-east-4" or "omiya-west-1"
+  const isWest = stop.id.includes("west");
+  const isEast = stop.id.includes("east");
+  
+  console.log("Stop ID analysis:", { stopId: stop.id, isWest, isEast });
+  
+  const platformList = isWest ? data.西口 : isEast ? data.東口 : null;
+  console.log("platformList:", platformList);
+  
+  if (!platformList) {
+    console.log("No platformList found, returning []");
+    return [];
+  }
+  
+  // Extract platform ID from stop.id (e.g., "omiya-east-4" -> id 4)
+  const match = stop.id.match(/(\d+)$/);
+  const platformId = match ? parseInt(match[1], 10) : NaN;
+  console.log("Extracted platformId:", platformId);
+  
+  // Find matching platform
+  const platform = platformList.find((p) => p.id === platformId);
+  console.log("Found platform:", platform);
+  
+  const titles = platform?.titles || [];
+  console.log("Returning titles:", titles);
+  return titles;
+}
 
 export default function App() {
   // Default to Omiya East Exit Stop 1 (e1) or find first Omiya stop
@@ -18,6 +56,17 @@ export default function App() {
   const [filterOmiya, setFilterOmiya] = useState(true);
   const [filterOthers, setFilterOthers] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Debug: Check Omiya station data on load
+  useEffect(() => {
+    console.log("🔍 Available bus stops with isOmiyaStation:");
+    busStops.forEach((stop) => {
+      if (stop.isOmiyaStation) {
+        console.log(`  ✓ ${stop.id}: ${stop.name} (isOmiyaStation: ${stop.isOmiyaStation})`);
+      }
+    });
+    console.log("defaultStop:", defaultStop);
+  }, []);
 
   // Check if mobile
   useEffect(() => {
@@ -68,10 +117,39 @@ export default function App() {
 
   console.log("App.tsx rendering desktop view");
 
+  // Get titles for Omiya station if selected
+  console.log("🔍 Checking selectedStop:", selectedStop);
+  
+  let selectedTitles: string[] | undefined = undefined;
+  
+  if (selectedStop) {
+    console.log("selectedStop exists:", {
+      id: selectedStop.id,
+      isOmiyaStation: selectedStop.isOmiyaStation,
+      type: typeof selectedStop.isOmiyaStation,
+    });
+    
+    if (selectedStop.isOmiyaStation) {
+      console.log("✓ isOmiyaStation is true, calling getTitlesForOmiyaStop");
+      selectedTitles = getTitlesForOmiyaStop(selectedStop);
+    } else {
+      console.log("✗ isOmiyaStation is false or undefined");
+    }
+  } else {
+    console.log("✗ selectedStop is null");
+  }
+  
+  console.log("📋 Final selectedTitles:", selectedTitles);
+
   // Desktop view
   return (
     <>
-      <SelectedPlatformBuses />
+      {selectedStop?.isOmiyaStation && selectedTitles && selectedTitles.length > 0 && (
+        <>
+          <SelectedPlatformBuses titles={selectedTitles} />
+          <BusroutePattern titles={selectedTitles} />
+        </>
+      )}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
