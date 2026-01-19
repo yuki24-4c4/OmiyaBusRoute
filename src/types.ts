@@ -29,3 +29,15 @@ export interface Departure {
   delay?: number;
   platform?: string;
 }
+
+export interface OmiyaPlatform {
+  id: number;
+  titles: string[];
+  lat: number;
+  lon: number;
+}
+
+export interface OmiyaStationData {
+  西口: OmiyaPlatform[];
+  東口: OmiyaPlatform[];
+}
