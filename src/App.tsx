@@ -5,8 +5,7 @@ import { DepartureBoard } from "./components/DepartureBoard";
 import { SearchPanel } from "./components/SearchPanel";
 import { MobileView } from "./components/MobileView";
 import { Card, CardContent } from "./components/ui/card";
-import SelectedPlatformBuses from "./components/SelectedPlatformBuses";
-import BusroutePattern from "./components/BusroutePattern";
+import { OdptRightPanel } from "./components/OdptRightPanel";
 import { busStops, routes, getBusStopById } from "./data/busData";
 import type { BusStop, OmiyaStationData } from "./types";
 import omiyaStationData from "./../omiya_station.json";
@@ -144,12 +143,6 @@ export default function App() {
   // Desktop view
   return (
     <>
-      {selectedStop?.isOmiyaStation && selectedTitles && selectedTitles.length > 0 && (
-        <>
-          <SelectedPlatformBuses titles={selectedTitles} />
-          <BusroutePattern titles={selectedTitles} />
-        </>
-      )}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
@@ -229,14 +222,14 @@ export default function App() {
             <div className="space-y-6">
               {selectedStop ? (
                 <>
-                  <RoutePanel
-                    stop={selectedStop}
-                    onClose={() => setSelectedStop(null)}
-                  />
-                  <DepartureBoard
-                    stop={selectedStop}
-                    currentTime={currentTime}
-                  />
+                  {selectedStop.isOmiyaStation && selectedTitles && selectedTitles.length > 0 ? (
+                    <OdptRightPanel titles={selectedTitles} />
+                  ) : (
+                    <>
+                      <RoutePanel stop={selectedStop} onClose={() => setSelectedStop(null)} />
+                      <DepartureBoard stop={selectedStop} currentTime={currentTime} />
+                    </>
+                  )}
                 </>
               ) : (
                 <Card className="shadow-lg p-8 text-center border-0">
